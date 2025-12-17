@@ -3,15 +3,15 @@
 import {
   Box,
   ButtonGroup,
-  createListCollection,
   HStack,
   IconButton,
   Pagination,
+  Portal,
   Select,
   Text,
+  createListCollection,
 } from '@chakra-ui/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
 interface TablePaginationProps {
   totalCount: number;
   pageSize: number;
@@ -23,10 +23,10 @@ interface TablePaginationProps {
 
 const frameworks = createListCollection({
   items: [
-    { label: 'React.js', value: 'react' },
-    { label: 'Vue.js', value: 'vue' },
-    { label: 'Angular', value: 'angular' },
-    { label: 'Svelte', value: 'svelte' },
+    { label: '10', value: '10' },
+    { label: '20', value: '20' },
+    { label: '50', value: '50' },
+    { label: '100', value: '100' },
   ],
 });
 
@@ -40,43 +40,42 @@ export default function TablePagination({
 }: TablePaginationProps) {
   return (
     <Box mt={6} width="100%">
-      <HStack justify="space-between" maxW="800px" mx="auto" flexWrap="wrap" gap={4}>
+      <HStack justify="space-between" mx="auto" flexWrap="wrap">
         {/* PAGE SIZE SELECT */}
         <HStack>
           <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
             Rows per page:
           </Text>
 
-          <Stack gap="5" width="320px">
-            <For each={['xs', 'sm', 'md', 'lg']}>
-              {(size) => (
-                <Select.Root key={size} size={size} collection={PAGE_SIZE_OPTIONS}>
-                  <Select.HiddenSelect />
-                  <Select.Label>size = {size}</Select.Label>
-                  <Select.Control>
-                    <Select.Trigger>
-                      <Select.ValueText placeholder="Select framework" />
-                    </Select.Trigger>
-                    <Select.IndicatorGroup>
-                      <Select.Indicator />
-                    </Select.IndicatorGroup>
-                  </Select.Control>
-                  <Portal>
-                    <Select.Positioner>
-                      <Select.Content>
-                        {frameworks.items.map((framework) => (
-                          <Select.Item item={framework} key={framework.value}>
-                            {framework.label}
-                            <Select.ItemIndicator />
-                          </Select.Item>
-                        ))}
-                      </Select.Content>
-                    </Select.Positioner>
-                  </Portal>
-                </Select.Root>
-              )}
-            </For>
-          </Stack>
+          <Select.Root
+            collection={frameworks}
+            size="sm"
+            width="60px"
+            onValueChange={(value) => onPageSizeChange(Number(value.items[0].value))}
+            value={[String(pageSize)]}
+          >
+            <Select.HiddenSelect />
+            <Select.Control>
+              <Select.Trigger>
+                <Select.ValueText placeholder="" />
+              </Select.Trigger>
+              <Select.IndicatorGroup>
+                <Select.Indicator />
+              </Select.IndicatorGroup>
+            </Select.Control>
+            <Portal>
+              <Select.Positioner>
+                <Select.Content>
+                  {frameworks.items.map((framework) => (
+                    <Select.Item item={framework.value} key={framework.value}>
+                      {framework.label}
+                      <Select.ItemIndicator />
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Positioner>
+            </Portal>
+          </Select.Root>
         </HStack>
 
         {/* PAGINATION */}
