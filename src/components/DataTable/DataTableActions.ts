@@ -12,10 +12,28 @@ export const toggleColumn = (id: ColumnId) => {
   }));
 };
 
-export const sortByColumn = (column: ColumnId) => {
-  tableStore.setState((s) =>
-    s.sortColumn === column
-      ? { ...s, sortDirection: s.sortDirection === 'asc' ? 'desc' : 'asc' }
-      : { ...s, sortColumn: column, sortDirection: 'asc' }
-  );
-};
+// export const sortByColumn = (column: ColumnId) => {
+//   tableStore.setState((s) =>
+//     s.sortColumn === column
+//       ? { ...s, sortDirection: s.sortDirection === 'asc' ? 'desc' : 'asc' }
+//       : { ...s, sortColumn: column, sortDirection: 'asc' }
+//   );
+// };
+
+
+export function sortByColumn(columnId: ColumnId) {
+  tableStore.setState((s) => {
+    if (s.sortColumn === columnId) {
+      return {
+        ...s,
+        sortDirection: s.sortDirection === 'asc' ? 'desc' : 'asc',
+      };
+    }
+
+    return {
+      ...s,
+      sortColumn: columnId,
+      sortDirection: 'asc',
+    };
+  });
+}

@@ -31,22 +31,28 @@ export default function DataTable() {
   }, [page, pageSize, sortColumn, sortDirection]);
 
   return (
-    <Box p={6}>
-      <Table.Root variant="outline" mt={4} w="100%" stickyHeader>
-        <TableHeader />
-        <TableRows data={processedData} />
-      </Table.Root>
+    <Box h="100vh" display="flex" flexDirection="column" p={4}>
+      <Box flex="1" overflow="hidden">
+        <Box h="100%" overflowY="auto" border="1px solid" borderColor="gray.200" borderRadius="md">
+          <Table.Root variant="outline" w="100%">
+            <TableHeader />
+            <TableRows data={processedData} page={page} pageSize={pageSize} />
+          </Table.Root>
+        </Box>
+      </Box>
 
-      <TablePagination
-        totalCount={dummyData.length}
-        pageSize={pageSize}
-        currentPage={page}
-        onPageChange={setPage}
-        onPageSizeChange={(s) => {
-          setPageSize(s);
-          setPage(1);
-        }}
-      />
+      <Box mt={1}>
+        <TablePagination
+          totalCount={dummyData.length}
+          pageSize={pageSize}
+          currentPage={page}
+          onPageChange={setPage}
+          onPageSizeChange={(s) => {
+            setPageSize(s);
+            setPage(1);
+          }}
+        />
+      </Box>
     </Box>
   );
 }

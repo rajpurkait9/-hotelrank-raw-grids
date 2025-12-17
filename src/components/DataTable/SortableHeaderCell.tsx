@@ -9,10 +9,12 @@ export default function SortableHeaderCell({
   id,
   children,
   onClick,
+  cursor,
 }: {
   id: string;
   children: React.ReactNode;
   onClick?: () => void;
+  cursor?: string;
 }) {
   const { setNodeRef, attributes, listeners, transform, transition } = useSortable({ id });
 
@@ -23,7 +25,7 @@ export default function SortableHeaderCell({
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
-        cursor: 'pointer',
+        cursor: cursor,
       }}
       {...attributes}
     >
