@@ -32,7 +32,9 @@ export const FiltersToolBar = ({
               : undefined
           }
           onReorder={onReorder}
-          onSizeChange={onSizeChange}
+          onSizeChange={
+            onSizeChange ? (id: string, size: number) => onSizeChange(id, size) : undefined
+          }
           onClear={onClear}
           maxToolbarUnits={maxToolbarUnits}
           pageKey={pageKey}

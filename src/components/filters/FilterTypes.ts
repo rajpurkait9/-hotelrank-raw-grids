@@ -2,11 +2,11 @@ import { ConditionalValue } from '@chakra-ui/react';
 
 export interface IFilterConfig {
   id: string;
-  //   label: string;
-  //   type: 'text' | 'date' | 'select' | 'checkbox' | 'radio' | 'number';
-  //   value: string | number | undefined;
-  //   options?: { label: string; value: string }[];
-  //   onChange?: (value: string | number | undefined) => void;
+  label: string;
+  type: 'text' | 'date' | 'select' | 'checkbox' | 'radio' | 'number';
+  value: string | number | undefined;
+  options?: { label: string; value: string }[];
+  onChange?: (value: string | number | undefined) => void;
   visible?: boolean; // This is used to control the visibility of the filter in the toolbar
   size?: 0.5 | 1 | 1.5 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5;
   customComponent?: React.ReactNode;
@@ -16,8 +16,8 @@ export interface IMainFilterType {
   title: React.ReactNode;
   filters: IFilterConfig[];
   onVisibilityChange?: (id: string, visible: boolean) => void;
-  onReorder?: (newOrderFilters: IFilterConfig[]) => void;
-  onSizeChange?: (size: number) => void;
+  onReorder?: (name: string, direction: string) => void;
+  onSizeChange?: (id : string, size: number) => void;
   onClear?: () => void;
   maxToolbarUnits?: number;
   filterDrawerSize?: 'md' | 'lg' | 'sm';
@@ -32,8 +32,8 @@ export interface IMainFilterType {
 export interface IFilterDrawerProps {
   filters: IFilterConfig[];
   onVisibilityChange?: (id: string, visible: boolean) => void;
-  onReorder?: (newOrderFilters: IFilterConfig[]) => void;
-  onSizeChange?: (size: number) => void;
+  onReorder?: (name: string, direction: string) => void;
+  onSizeChange?: (id: string, size: number) => void;
   onClear?: () => void;
   maxToolbarUnits?: number;
   filterDrawerSize?: 'md' | 'lg' | 'sm';

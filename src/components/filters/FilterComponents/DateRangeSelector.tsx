@@ -258,6 +258,7 @@ export default function DateRangeFilter({
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             pr={input ? '10' : undefined} // make room for clear button
+            w="100%"
           />
 
           {input && (
@@ -267,6 +268,7 @@ export default function DateRangeFilter({
                 variant="ghost"
                 aria-label="Clear date range"
                 onClick={handleClear}
+                w="100%"
               />
             </InputElement>
           )}
