@@ -2,7 +2,7 @@
 
 import { Box, Table } from '@chakra-ui/react';
 import { useStore } from '@tanstack/react-store';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import TableHeader from './DataTableHeader';
 import TablePagination from './DataTablePagination';
 import TableRows from './DataTableRow';
@@ -15,13 +15,13 @@ export default function DataTable<T extends Record<string, unknown>>({
   loading = false,
   emptyMessage = 'No data',
   actions,
-  page = 0,
+  page = 1,
   pageSize = 10,
   onPageChange,
   onPageSizeChange,
   density = 'sm',
 }: DataTableProps<T>) {
-  useMemo(() => {
+  useEffect(() => {
     setData(rowData, headers);
   }, [rowData]);
 
@@ -40,7 +40,7 @@ export default function DataTable<T extends Record<string, unknown>>({
 
     const start = (page - 1) * pageSize;
     return data.slice(start, start + pageSize);
-  }, [page, pageSize, sortColumn, sortDirection]);
+  }, [page, pageSize, sortColumn, sortDirection, newData]);
 
 
   return (
