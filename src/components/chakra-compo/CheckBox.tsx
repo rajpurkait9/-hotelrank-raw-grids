@@ -1,6 +1,6 @@
 import { Checkbox } from '@chakra-ui/react';
-import { withChildren } from '../../../utils/chakra-slot';
-import { IMDSCheckboxTypes } from '../FilterTypes';
+import { withChildren } from '../../utils/chakra-slot';
+import { IMDSCheckboxTypes } from './compo_types';
 
 const CheckboxRoot = withChildren(Checkbox.Root);
 const CheckboxHiddenInput = withChildren(Checkbox.HiddenInput);

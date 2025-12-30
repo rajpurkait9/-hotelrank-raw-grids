@@ -1,7 +1,10 @@
+import { Text } from '@chakra-ui/react';
+import { Edit, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { DataTable } from './components/DataTable';
-import DateRangeFilter from './components/filters/FilterComponents/DateRangeSelector';
+import { IFilterConfig } from './components/filters';
 import { FiltersToolBar } from './components/filters/Filters';
+import { loadOrder, saveOrder } from './components/filters/reorderStore';
 import { dummyData } from './dummy/data';
 
 const headers = [
@@ -18,31 +21,32 @@ function App() {
   const [filters, setFilters] = useState<IFilterConfig[]>([
     {
       id: 'DateRange',
-      customComponent: (
-        <DateRangeFilter onChange={(v) => updateFilterValue('DateRange', v)} value={''} />
-      ),
       visible: true,
       label: 'Date Range',
-      value: '',
+      value: undefined,
       onChange: (v: string | number | boolean | undefined) => updateFilterValue('DateRange', v),
-      size: 1.5,
+      size: 2.5,
       type: 'date',
     },
-
     {
       id: 'select',
-      customComponent: <Demo />,
+      // customComponent: <Demo />,
       visible: true,
-      label: 'Select',
+      label: '',
       value: '',
       onChange: (v: string | number | boolean | undefined) => updateFilterValue('select', v),
       size: 1.5,
       type: 'select',
+      options: [
+        { label: 'Option 1', value: '1' },
+        { label: 'Option 2', value: '2' },
+        { label: 'Option 3', value: '3' },
+      ],
     },
 
     {
-      id: 'checkbox',
-      customComponent: <DemoCheckbox />,
+      id: 'checkbox-2',
+      // customComponent: <DemoCheckbox />,
       visible: true,
       label: 'Checkbox',
       value: '',
@@ -53,7 +57,7 @@ function App() {
 
     {
       id: 'search input',
-      customComponent: <DemoSearch />,
+      // customComponent: <DemoSearch />,
       visible: true,
       label: 'Search',
       value: '',
@@ -72,6 +76,7 @@ function App() {
   }
 
   function handleSize(id: string, size: number) {
+    console.log({ id, size });
     type UpdatedFilter = IFilterConfig & { size: number };
 
     setFilters((prev: IFilterConfig[]) =>
@@ -166,123 +171,3 @@ function App() {
 }
 
 export default App;
-
-('use client');
-
-import { Combobox, HStack, Text, useFilter, useListCollection } from '@chakra-ui/react';
-
-const ComboboxRoot = withChildren(Combobox.Root);
-const ComboboxControl = withChildren(Combobox.Control);
-const ComboboxInput = withChildren(Combobox.Input);
-const ComboboxIndicatorGroup = withChildren(Combobox.IndicatorGroup);
-const ComboboxClearTrigger = withChildren(Combobox.ClearTrigger);
-const ComboboxTrigger = withChildren(Combobox.Trigger);
-const ComboboxPositioner = withChildren(Combobox.Positioner);
-const ComboboxContent = withChildren(Combobox.Content);
-const ComboboxEmpty = withChildren(Combobox.Empty);
-const ComboboxItem = withChildren(Combobox.Item);
-const ComboboxItemIndicator = withChildren(Combobox.ItemIndicator);
-
-const Demo = () => {
-  const { contains } = useFilter({ sensitivity: 'base' });
-
-  const { collection, filter } = useListCollection({
-    initialItems: frameworks,
-    filter: contains,
-  });
-
-  return (
-    <ComboboxRoot
-      collection={collection}
-      onInputValueChange={(e) => filter(e.inputValue)}
-      size="sm"
-    >
-      <ComboboxControl>
-        <ComboboxInput placeholder="Type to search" />
-        <ComboboxIndicatorGroup>
-          <ComboboxClearTrigger />
-          <ComboboxTrigger />
-        </ComboboxIndicatorGroup>
-      </ComboboxControl>
-      {/* <Portal> */}
-      <ComboboxPositioner>
-        <ComboboxContent>
-          <ComboboxEmpty>No items found</ComboboxEmpty>
-          {collection.items.map((item) => (
-            <ComboboxItem item={item} key={item.value}>
-              {item.label}
-              <ComboboxItemIndicator />
-            </ComboboxItem>
-          ))}
-        </ComboboxContent>
-      </ComboboxPositioner>
-      {/* </Portal> */}
-    </ComboboxRoot>
-  );
-};
-
-const frameworks = [
-  { label: 'React', value: 'react' },
-  { label: 'Solid', value: 'solid' },
-  { label: 'Vue', value: 'vue' },
-  { label: 'Angular', value: 'angular' },
-  { label: 'Svelte', value: 'svelte' },
-  { label: 'Preact', value: 'preact' },
-  { label: 'Qwik', value: 'qwik' },
-  { label: 'Lit', value: 'lit' },
-  { label: 'Alpine.js', value: 'alpinejs' },
-  { label: 'Ember', value: 'ember' },
-  { label: 'Next.js', value: 'nextjs' },
-];
-
-import { Field, Input } from '@chakra-ui/react';
-const FieldRoot = withChildren(Field.Root);
-
-const DemoSearch = () => {
-  return (
-    <FieldRoot>
-      <Input size={'sm'} placeholder="Search" />
-    </FieldRoot>
-  );
-};
-
-import { Checkbox } from '@chakra-ui/react';
-import { Edit, Trash } from 'lucide-react';
-import { IFilterConfig } from './components/filters/FilterTypes';
-import { loadOrder, saveOrder } from './components/filters/reorderStore';
-import { withChildren } from './utils/chakra-slot';
-
-const CheckboxRoot = withChildren(Checkbox.Root);
-const CheckboxHiddenInput = withChildren(Checkbox.HiddenInput);
-const CheckboxControl = withChildren(Checkbox.Control);
-const CheckboxLabel = withChildren(Checkbox.Label);
-
-const DemoCheckbox = () => {
-  return (
-    <HStack>
-      <CheckboxRoot size={'sm'}>
-        <CheckboxHiddenInput />
-        <CheckboxControl />
-        <CheckboxLabel>open</CheckboxLabel>
-      </CheckboxRoot>
-
-      <CheckboxRoot defaultChecked size={'sm'}>
-        <CheckboxHiddenInput />
-        <CheckboxControl />
-        <CheckboxLabel>Close</CheckboxLabel>
-      </CheckboxRoot>
-
-      <CheckboxRoot size={'sm'}>
-        <CheckboxHiddenInput />
-        <CheckboxControl />
-        <CheckboxLabel>Readonly</CheckboxLabel>
-      </CheckboxRoot>
-
-      <CheckboxRoot invalid size={'sm'}>
-        <CheckboxHiddenInput />
-        <CheckboxControl />
-        <CheckboxLabel>Invalid</CheckboxLabel>
-      </CheckboxRoot>
-    </HStack>
-  );
-};

@@ -17,7 +17,11 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-ki
 import { useStore } from '@tanstack/react-store';
 import { Bookmark, Delete, Edit2, Filter, Settings } from 'lucide-react';
 import { withChildren } from '../../utils/chakra-slot';
-import { IFilterDrawerProps } from './FilterTypes';
+import MDSCheckbox from '../chakra-compo/CheckBox';
+import DateRangeFilter from '../chakra-compo/DateRangeSelector';
+import MDSInput from '../chakra-compo/Input';
+import MDSSelectBox from '../chakra-compo/SelectBox';
+import { IFilterConfig, IFilterDrawerProps } from './FilterTypes';
 import { addPreset, deletePreset, getPresets, presetStore } from './presetStore';
 import SortableFilterItem from './SortableFilterItem';
 
@@ -36,6 +40,59 @@ const TabsList = withChildren(Tabs.List);
 const TabsTrigger = withChildren(Tabs.Trigger);
 const TabsContent = withChildren(Tabs.Content);
 
+export const renderFilter = (filter: IFilterConfig) => {
+  if (filter.customComponent) {
+    return filter.customComponent;
+  }
+
+  switch (filter.type) {
+    case 'text':
+      return (
+        <MDSInput
+          placeholder={filter.label}
+          value={filter.value as string}
+          onChange={filter.onChange}
+          label=""
+        />
+      );
+
+    case 'number':
+      return (
+        <MDSInput label={filter.label} value={filter.value as number} onChange={filter.onChange} />
+      );
+
+    case 'checkbox':
+      return (
+        <MDSCheckbox
+          label={filter.label}
+          value={filter.value as boolean}
+          onChange={filter.onChange}
+        />
+      );
+
+    case 'select':
+      return (
+        <MDSSelectBox
+          label={filter.label}
+          value={filter.value as string}
+          onChange={filter.onChange}
+          options={filter.options ?? []}
+        />
+      );
+
+    case 'date':
+      return (
+        <DateRangeFilter
+          value={filter.value as string}
+          onChange={filter.onChange as (v: string | undefined) => void}
+        />
+      );
+
+    default:
+      return null;
+  }
+};
+
 export const FiltersDrawer = ({
   filterDrawerSize = 'sm',
   onVisibilityChange,
@@ -48,7 +105,6 @@ export const FiltersDrawer = ({
   activePresetName,
   onReorder,
 }: IFilterDrawerProps) => {
-  // 👇 THIS IS THE SECRET
   const state = useStore(presetStore);
   const presets = state[pageKey] ?? getPresets(pageKey);
 
@@ -109,12 +165,13 @@ export const FiltersDrawer = ({
                           align="stretch"
                           border="1px solid"
                           borderColor="gray.200"
+                          flex={f.size ?? 1}
+                          minW={`${(f.size ?? 1) * 100}px`}
                           rounded="md"
                           p={3}
                           mb={3}
                         >
-                          <Text fontWeight="bold">{f.label}</Text>
-                          {f.customComponent}
+                          {renderFilter(f)}
                         </VStack>
                       ))}
                   </TabsContent>
@@ -128,12 +185,7 @@ export const FiltersDrawer = ({
 
                         const oldIndex = filters.findIndex((f) => f.id === active.id);
                         const newIndex = filters.findIndex((f) => f.id === over.id);
-
                         const reordered = arrayMove(filters, oldIndex, newIndex);
-
-                        // saveOrder(pageKey, reordered);
-                        console.log(reordered);
-
                         onReorder?.(reordered);
                       }}
                     >

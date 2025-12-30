@@ -16,7 +16,7 @@ import {
 
 import { Calendar } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { withChildren } from '../../../utils/chakra-slot';
+import { withChildren } from '../../utils/chakra-slot';
 import {
   DATE_SEPARATOR,
   formatDatePart,
@@ -24,7 +24,7 @@ import {
   getTodayFormatted,
   getTodayISO,
   parsePartialDate,
-} from '../shared/dateUtils';
+} from '../filters/shared/dateUtils';
 
 const PopoverRoot = withChildren(Popover.Root);
 const PopoverTrigger = withChildren(Popover.Trigger);

@@ -35,23 +35,23 @@ export default function DataTable<T extends Record<string, unknown>>({
   const { sortColumn, sortDirection, data: newData } = useStore(tableStore);
 
   const processedData = useMemo(() => {
-  const data = [...newData];
+    const data = [...newData];
 
-  if (sortColumn) {
-    data.sort((a, b) =>
-      sortDirection === 'asc'
-        ? String(a[sortColumn]).localeCompare(String(b[sortColumn]))
-        : String(b[sortColumn]).localeCompare(String(a[sortColumn])),
-    );
-  }
+    if (sortColumn) {
+      data.sort((a, b) =>
+        sortDirection === 'asc'
+          ? String(a[sortColumn]).localeCompare(String(b[sortColumn]))
+          : String(b[sortColumn]).localeCompare(String(a[sortColumn])),
+      );
+    }
 
-  if (paginationMode === 'client') {
-    const start = page * pageSize; // 0-based
-    return data.slice(start, start + pageSize);
-  }
+    if (paginationMode === 'client') {
+      const start = page * pageSize;
+      return data.slice(start, start + pageSize);
+    }
 
-  return data;
-}, [newData, sortColumn, sortDirection, page, pageSize, paginationMode]);
+    return data;
+  }, [newData, sortColumn, sortDirection, page, pageSize, paginationMode]);
 
   return (
     <Box h="100%" display="flex" flexDirection="column" p={2} pt={2} minHeight={0}>

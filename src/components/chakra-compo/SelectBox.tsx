@@ -1,8 +1,8 @@
 'use client';
 
 import { Field, Portal, Select, createListCollection } from '@chakra-ui/react';
-import { withChildren } from '../../../utils/chakra-slot';
-import { IMDSSelectBoxTypes } from '../FilterTypes';
+import { withChildren } from '../../utils/chakra-slot';
+import { IMDSSelectBoxTypes } from './compo_types';
 
 const FieldRoot = withChildren(Field.Root);
 const FieldHelperText = withChildren(Field.HelperText);
@@ -21,9 +21,8 @@ const SelectItemIndicator = withChildren(Select.ItemIndicator);
 const SelectHiddenSelect = withChildren(Select.HiddenSelect);
 const SelectPositioner = withChildren(Select.Positioner);
 
-
 const MDSSelectBox = ({
-  options = frameworks.items,
+  options = [],
   label,
   value,
   onChange,
@@ -36,18 +35,24 @@ const MDSSelectBox = ({
   required,
   errorText,
 }: IMDSSelectBoxTypes) => {
+  const collection = createListCollection({
+    items: options,
+  });
+
   return (
     <FieldRoot disabled={isDisabled} required={required}>
       <SelectRoot
-        collection={options}
+        collection={collection}
         variant={variant}
         size={size}
         width={width}
         value={value ? [value] : []}
-        onValueChange={(value) => onChange && onChange(value[0])}
+        onValueChange={(details) => onChange?.(details.value[0])}
       >
         <SelectHiddenSelect />
+
         {label && <SelectLabel>{label}</SelectLabel>}
+
         <SelectControl>
           <SelectTrigger>
             <SelectValueText placeholder={placeholder} />
@@ -56,19 +61,19 @@ const MDSSelectBox = ({
             <SelectIndicator />
           </SelectIndicatorGroup>
         </SelectControl>
-        <Portal>
+
           <SelectPositioner>
             <SelectContent>
-              {options.map((item) => (
-                <SelectItem item={item} key={item.value}>
+              {collection.items.map((item) => (
+                <SelectItem key={item.value} item={item}>
                   {item.label}
                   <SelectItemIndicator />
                 </SelectItem>
               ))}
             </SelectContent>
           </SelectPositioner>
-        </Portal>
       </SelectRoot>
+
       {helperText && <FieldHelperText>{helperText}</FieldHelperText>}
       {errorText && <FieldErrorText>{errorText}</FieldErrorText>}
     </FieldRoot>
@@ -76,12 +81,3 @@ const MDSSelectBox = ({
 };
 
 export default MDSSelectBox;
-
-const frameworks = createListCollection({
-  items: [
-    { label: 'React.js', value: 'react' },
-    { label: 'Vue.js', value: 'vue' },
-    { label: 'Angular', value: 'angular' },
-    { label: 'Svelte', value: 'svelte' },
-  ],
-});

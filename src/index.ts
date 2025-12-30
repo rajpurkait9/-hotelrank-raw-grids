@@ -8,3 +8,5 @@ export * from './components/filters/reorderStore';
 export * from './components/filters/FilterTypes';
 
 export * from './utils/chakra-slot';
+
+export * as MdsSharedUi from './components/chakra-compo';
