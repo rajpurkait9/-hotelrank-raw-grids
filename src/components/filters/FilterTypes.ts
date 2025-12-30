@@ -13,7 +13,7 @@ export interface IFilterConfig {
 }
 
 export interface IMainFilterType {
-  title: JSX.Element;
+  title?: JSX.Element;
   filters: IFilterConfig[];
   onVisibilityChange?: (id: string, visible: boolean) => void;
   onReorder?: (newOrder: IFilterConfig[]) => void;
@@ -41,4 +41,5 @@ export interface IFilterDrawerProps {
   currentFilters?: Record<string, unknown>;
   onLoadPreset?: (filters: Record<string, unknown>, name: string) => void;
   activePresetName?: string | null;
+
 }

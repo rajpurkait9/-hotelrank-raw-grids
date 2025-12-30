@@ -30,9 +30,8 @@ function App() {
     },
     {
       id: 'select',
-      // customComponent: <Demo />,
       visible: true,
-      label: '',
+      label: 'Select Box',
       value: '',
       onChange: (v: string | number | boolean | undefined) => updateFilterValue('select', v),
       size: 1.5,
@@ -57,7 +56,6 @@ function App() {
 
     {
       id: 'search input',
-      // customComponent: <DemoSearch />,
       visible: true,
       label: 'Search',
       value: '',

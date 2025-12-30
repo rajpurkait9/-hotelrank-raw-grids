@@ -1,4 +1,4 @@
-import { ConditionalValue } from "@chakra-ui/react";
+import { ConditionalValue } from '@chakra-ui/react';
 
 export interface IMDSInputTypes {
   icon?: React.ReactNode;
@@ -13,6 +13,7 @@ export interface IMDSInputTypes {
   isDisabled?: boolean;
   required?: boolean;
   errorText?: string;
+  visible?: boolean;
 }
 
 export interface IMDSSelectBoxTypes {
@@ -20,7 +21,7 @@ export interface IMDSSelectBoxTypes {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xs';
   width?: string;
   variant?: ConditionalValue<'subtle' | 'outline' | undefined>;
   label?: string;
@@ -28,6 +29,7 @@ export interface IMDSSelectBoxTypes {
   isDisabled?: boolean;
   required?: boolean;
   errorText?: string;
+  visible?: boolean;
 }
 
 export interface IMDSCheckboxTypes {
@@ -39,4 +41,18 @@ export interface IMDSCheckboxTypes {
   isDisabled?: boolean;
   required?: boolean;
   errorText?: string;
+}
+
+export interface IMDSButtonTypes {
+  onClick?: () => void;
+  size?: 'sm' | 'md' | 'lg' | 'xs';
+  variant?: ConditionalValue<'subtle' | 'solid' | 'outline' | 'ghost' | 'plain'>;
+  label?: string;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  isDisabled?: boolean;
+  colorScheme?: 'blue' | 'red' | 'green' | 'yellow' | 'gray' | 'cyan' | 'orange' | 'purple';
+  loading?: boolean;
+  loadingText?: string;
+  rounded?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
 }

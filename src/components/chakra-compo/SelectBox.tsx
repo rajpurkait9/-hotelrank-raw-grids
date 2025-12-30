@@ -1,6 +1,6 @@
 'use client';
 
-import { Field, Portal, Select, createListCollection } from '@chakra-ui/react';
+import { Field, Select, createListCollection } from '@chakra-ui/react';
 import { withChildren } from '../../utils/chakra-slot';
 import { IMDSSelectBoxTypes } from './compo_types';
 
@@ -27,13 +27,14 @@ const MDSSelectBox = ({
   value,
   onChange,
   placeholder,
-  size = 'sm',
+  size = 'xs',
   width = '100%',
   variant = 'outline',
   helperText,
   isDisabled,
   required,
   errorText,
+  visible,
 }: IMDSSelectBoxTypes) => {
   const collection = createListCollection({
     items: options,
@@ -51,7 +52,7 @@ const MDSSelectBox = ({
       >
         <SelectHiddenSelect />
 
-        {label && <SelectLabel>{label}</SelectLabel>}
+        {visible && <SelectLabel>{label}</SelectLabel>}
 
         <SelectControl>
           <SelectTrigger>
@@ -62,16 +63,16 @@ const MDSSelectBox = ({
           </SelectIndicatorGroup>
         </SelectControl>
 
-          <SelectPositioner>
-            <SelectContent>
-              {collection.items.map((item) => (
-                <SelectItem key={item.value} item={item}>
-                  {item.label}
-                  <SelectItemIndicator />
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectPositioner>
+        <SelectPositioner>
+          <SelectContent>
+            {collection.items.map((item) => (
+              <SelectItem key={item.value} item={item}>
+                {item.label}
+                <SelectItemIndicator />
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </SelectPositioner>
       </SelectRoot>
 
       {helperText && <FieldHelperText>{helperText}</FieldHelperText>}

@@ -46,7 +46,7 @@ export default function DataTable<T extends Record<string, unknown>>({
     }
 
     if (paginationMode === 'client') {
-      const start = page * pageSize;
+      const start = (page - 1) * pageSize;
       return data.slice(start, start + pageSize);
     }
 

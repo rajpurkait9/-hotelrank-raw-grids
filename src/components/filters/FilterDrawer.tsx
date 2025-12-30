@@ -40,7 +40,7 @@ const TabsList = withChildren(Tabs.List);
 const TabsTrigger = withChildren(Tabs.Trigger);
 const TabsContent = withChildren(Tabs.Content);
 
-export const renderFilter = (filter: IFilterConfig) => {
+export const renderFilter = (filter: IFilterConfig, drawerOpen?: boolean) => {
   if (filter.customComponent) {
     return filter.customComponent;
   }
@@ -52,7 +52,8 @@ export const renderFilter = (filter: IFilterConfig) => {
           placeholder={filter.label}
           value={filter.value as string}
           onChange={filter.onChange}
-          label=""
+          label={filter.label}
+          visible={drawerOpen}
         />
       );
 
@@ -77,6 +78,7 @@ export const renderFilter = (filter: IFilterConfig) => {
           value={filter.value as string}
           onChange={filter.onChange}
           options={filter.options ?? []}
+          visible={drawerOpen}
         />
       );
 
@@ -93,6 +95,11 @@ export const renderFilter = (filter: IFilterConfig) => {
   }
 };
 
+interface DrawerProps extends IFilterDrawerProps {
+  open: boolean;
+  onOpenChange: (open: { open: boolean }) => void;
+}
+
 export const FiltersDrawer = ({
   filterDrawerSize = 'sm',
   onVisibilityChange,
@@ -104,7 +111,9 @@ export const FiltersDrawer = ({
   onLoadPreset,
   activePresetName,
   onReorder,
-}: IFilterDrawerProps) => {
+  open,
+  onOpenChange,
+}: DrawerProps) => {
   const state = useStore(presetStore);
   const presets = state[pageKey] ?? getPresets(pageKey);
 
@@ -121,7 +130,7 @@ export const FiltersDrawer = ({
 
   return (
     <HStack wrap="wrap">
-      <DrawerRoot size={filterDrawerSize}>
+      <DrawerRoot size={filterDrawerSize} open={open} onOpenChange={onOpenChange}>
         <DrawerTrigger asChild>
           <IconButton aria-label="Open filters" variant="outline" size="xs" ml={2} p={2}>
             <Filter size={16} />
@@ -171,7 +180,7 @@ export const FiltersDrawer = ({
                           p={3}
                           mb={3}
                         >
-                          {renderFilter(f)}
+                          {renderFilter(f, open)}
                         </VStack>
                       ))}
                   </TabsContent>
