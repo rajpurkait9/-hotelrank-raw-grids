@@ -43,4 +43,5 @@ export interface DataTableProps<T = unknown> {
   density?: DensityType;
   totalCount?: number;
   paginationMode?: 'server' | 'client';
+  actionHeader?: JSX.Element;
 }

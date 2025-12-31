@@ -12,6 +12,7 @@ export default function SortableHeaderCell({
   cursor,
   borderRight,
   borderRightColor,
+  backgroundColor,
 }: {
   id: string;
   children: React.ReactNode;
@@ -19,6 +20,7 @@ export default function SortableHeaderCell({
   cursor?: string;
   borderRight?: string;
   borderRightColor?: string;
+  backgroundColor?: string;
 }) {
   const { setNodeRef, attributes, listeners, transform, transition } = useSortable({ id });
 
@@ -26,6 +28,7 @@ export default function SortableHeaderCell({
     <Table.ColumnHeader
       ref={setNodeRef}
       onClick={onClick}
+      backgroundColor={backgroundColor}
       w={id === 'id' ? '80px' : undefined}
       style={{
         transform: CSS.Transform.toString(transform),

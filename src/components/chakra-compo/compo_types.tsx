@@ -54,5 +54,6 @@ export interface IMDSButtonTypes {
   colorScheme?: 'blue' | 'red' | 'green' | 'yellow' | 'gray' | 'cyan' | 'orange' | 'purple';
   loading?: boolean;
   loadingText?: string;
-  rounded?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  rounded?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'xs';
+  type?: 'submit' | 'reset' | 'button';
 }

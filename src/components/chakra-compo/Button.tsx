@@ -3,7 +3,7 @@ import { IMDSButtonTypes } from './compo_types';
 
 const MDSButton = ({
   onClick,
-  size = 'sm',
+  size = 'xs',
   variant = 'solid',
   label,
   leftIcon,
@@ -13,6 +13,7 @@ const MDSButton = ({
   loading,
   loadingText,
   rounded,
+  type = 'button',
 }: IMDSButtonTypes) => {
   return (
     <Button
@@ -24,6 +25,7 @@ const MDSButton = ({
       loading={loading}
       loadingText={loadingText}
       rounded={rounded}
+      type={type}
     >
       <HStack gap={1}>
         {leftIcon}
