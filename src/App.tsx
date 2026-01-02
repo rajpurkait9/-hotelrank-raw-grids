@@ -1,6 +1,7 @@
 import { Text } from '@chakra-ui/react';
 import { Edit, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import MDSConfirmDeleteDialog from './components/chakra-compo/DeleteDialogBox';
 import { DataTable } from './components/DataTable';
 import { IFilterConfig } from './components/filters';
 import { FiltersToolBar } from './components/filters/Filters';
@@ -9,7 +10,7 @@ import { dummyData } from './dummy/data';
 
 const headers = [
   { id: 'id', label: 'ID' },
-  { id: 'name', label: 'User Name' },
+  { id: 'name', label: 'User Name', backgroundColor: 'orange.400' },
   { id: 'email', label: 'Email' },
   { id: 'role', label: 'Role' },
 ];
@@ -17,6 +18,7 @@ const headers = [
 function App() {
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
+  const [open, setOpen] = useState(false);
 
   const [filters, setFilters] = useState<IFilterConfig[]>([
     {
@@ -149,6 +151,7 @@ function App() {
         onPageChange={(page) => setPage(page)}
         onPageSizeChange={(pageSize) => setPageSize(pageSize)}
         headers={headers}
+        key={'something'}
         actions={[
           {
             icon: <Edit size={14} />,
@@ -159,10 +162,21 @@ function App() {
           {
             icon: <Trash size={14} />,
             label: 'Delete',
-            onClick: () => console.log('Edit'),
+            onClick: () => setOpen(true),
             colorScheme: 'red',
           },
         ]}
+      />
+
+      <MDSConfirmDeleteDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onConfirm={() => setOpen(false)}
+        title="Delete Company"
+        entityName="Company"
+        confirmText="DELETE"
+        confirmLabel="Delete"
+        isLoading={false}
       />
     </div>
   );

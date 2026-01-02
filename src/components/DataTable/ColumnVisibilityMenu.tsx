@@ -2,7 +2,7 @@
 
 import { Checkbox, IconButton, Menu, Portal } from '@chakra-ui/react';
 import { useStore } from '@tanstack/react-store';
-import { Columns } from 'lucide-react';
+import { Columns, Columns2, Tally4, Tally5 } from 'lucide-react';
 import { withChildren } from '../../utils/chakra-slot';
 import { tableStore } from './tableStore';
 
@@ -24,8 +24,8 @@ export default function ColumnVisibilityMenu({ visibility, onToggle }: Props) {
   return (
     <Menu.Root closeOnSelect={false}>
       <MenuTrigger asChild>
-        <IconButton aria-label="Toggle columns" variant="outline" size="sm" ml="1">
-          <Columns size={18} />
+        <IconButton aria-label="Toggle columns" variant="ghost" ml="1" size="xs">
+          <Columns2 size={18} />
         </IconButton>
       </MenuTrigger>
 

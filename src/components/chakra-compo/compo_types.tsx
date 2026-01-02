@@ -51,9 +51,30 @@ export interface IMDSButtonTypes {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   isDisabled?: boolean;
-  colorScheme?: 'blue' | 'red' | 'green' | 'yellow' | 'gray' | 'cyan' | 'orange' | 'purple';
+  colorScheme?:
+    | 'blue'
+    | 'red'
+    | 'green'
+    | 'yellow'
+    | 'gray'
+    | 'cyan'
+    | 'orange'
+    | 'purple'
+    | string;
   loading?: boolean;
   loadingText?: string;
   rounded?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'xs';
   type?: 'submit' | 'reset' | 'button';
+}
+
+export interface ConfirmDeleteDialogProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+
+  title?: string;
+  entityName: string; // e.g. "Mahavir Enterprises"
+  confirmText?: string; // default: DELETE
+  confirmLabel?: string; // button text
+  isLoading?: boolean;
 }

@@ -3,10 +3,11 @@
 import { Box, Table } from '@chakra-ui/react';
 import { useStore } from '@tanstack/react-store';
 import { useEffect, useMemo } from 'react';
+import { loadColumnVisibility } from './DataTableActions';
 import TableHeader from './DataTableHeader';
 import TablePagination from './DataTablePagination';
 import TableRows from './DataTableRow';
-import { setData, setTableId, tableStore } from './tableStore';
+import { setActionsConfig, setData, setTableId, tableStore } from './tableStore';
 import { DataTableProps } from './types';
 
 export default function DataTable<T extends Record<string, unknown>>({
@@ -23,19 +24,28 @@ export default function DataTable<T extends Record<string, unknown>>({
   density = 'sm',
   totalCount = 0,
   paginationMode = 'client',
+  actionConfig,
 }: DataTableProps<T>) {
   useEffect(() => {
     setTableId(tableId);
+    loadColumnVisibility(tableId);
   }, [tableId]);
 
   useEffect(() => {
     setData(rowData, headers);
   }, [rowData, headers]);
 
+  useEffect(() => {
+    if (actionConfig) {
+      setActionsConfig(actionConfig);
+    }
+  }, [actionConfig]);
+
   const { sortColumn, sortDirection, data: newData } = useStore(tableStore);
 
   const processedData = useMemo(() => {
     const data = [...newData];
+    const safePage = Math.max(1, page || 1);
 
     if (sortColumn) {
       data.sort((a, b) =>
@@ -46,12 +56,18 @@ export default function DataTable<T extends Record<string, unknown>>({
     }
 
     if (paginationMode === 'client') {
-      const start = (page - 1) * pageSize;
+      const start = (safePage - 1) * pageSize;
       return data.slice(start, start + pageSize);
     }
 
     return data;
   }, [newData, sortColumn, sortDirection, page, pageSize, paginationMode]);
+
+  useEffect(() => {
+    if (page < 1 && onPageChange) {
+      onPageChange(1);
+    }
+  }, [page, onPageChange]);
 
   return (
     <Box h="100%" display="flex" flexDirection="column" p={2} pt={2} minHeight={0}>

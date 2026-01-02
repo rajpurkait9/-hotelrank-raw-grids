@@ -1,5 +1,6 @@
 export { default as DataTable } from './components/DataTable/DataTable';
 export * from './components/DataTable/tableStore';
+export * from './components/DataTable/types';
 
 export { default as Filters } from './components/filters/Filters';
 export * from './components/filters/presetStore';
@@ -11,6 +12,7 @@ export * from './utils/chakra-slot';
 
 export { default as MDSButton } from './components/chakra-compo/Button';
 export { default as MDSCheckbox } from './components/chakra-compo/CheckBox';
+export { default as MDSConfirmDeleteDialog } from './components/chakra-compo/DeleteDialogBox';
 export { default as MDSInput } from './components/chakra-compo/Input';
 export {
   default as MDSRefreshButton,

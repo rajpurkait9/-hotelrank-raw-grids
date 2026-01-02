@@ -1,7 +1,7 @@
 import { Store } from '@tanstack/store';
 // import { COLUMN_ORDER_KEY } from './DataTableActions';
 import { getColumnOrderKey } from './DataTableActions';
-import { Column } from './types';
+import { ActionHeaderProps, Column } from './types';
 
 interface TableState {
   tableId: string;
@@ -11,11 +11,12 @@ interface TableState {
   columnOrder: Column<any>[]; // ← FIXED
   data: any[];
   sortableColumns: {
-    // ← FIXED SPELLING
     id: string;
     label: string;
     sortable: boolean;
+    backgroundColor?: string;
   }[];
+  actionsConfig?: ActionHeaderProps;
 }
 
 export const tableStore = new Store<TableState>({
@@ -26,37 +27,54 @@ export const tableStore = new Store<TableState>({
   columnOrder: [],
   data: [],
   sortableColumns: [], // ← FIXED
+  actionsConfig: {
+    showActionColumn: true,
+    showColumnVisibilityMenu: true,
+    children: 'Actions',
+    width: '100px',
+  },
 });
 
 // export function setData(newData: any[], headers?: Column<any>[]) {
 //   const firstRow = newData[0] ?? {};
+
 //   const dynamicColumns =
 //     headers && headers.length
 //       ? headers
 //       : Object.keys(firstRow).map((key) => ({ id: key, label: key }));
 
-//   const validColumns = dynamicColumns.filter((col) => firstRow.hasOwnProperty(col.id));
+//   const validColumns = dynamicColumns.filter((col) =>
+//     Object.prototype.hasOwnProperty.call(firstRow, col.id),
+//   );
+
+//   const { tableId } = tableStore.state;
+//   const savedOrderIds: string[] = JSON.parse(
+//     localStorage.getItem(getColumnOrderKey(tableId)) || '[]',
+//   );
+
+//   const orderedColumns: Column<any>[] = [
+//     ...savedOrderIds.map((id) => validColumns.find((c) => c.id === id)).filter(Boolean),
+//     ...validColumns.filter((col) => !savedOrderIds.includes(col.id)),
+//   ] as Column<any>[];
+
 //   tableStore.setState((prev) => ({
 //     ...prev,
 //     data: newData,
-//     columnOrder: validColumns,
+//     columnOrder: orderedColumns,
 
-//     visibility: validColumns.reduce(
-//       (acc, col) => ({
-//         ...acc,
-//         [col.id]: true,
-//       }),
-//       {},
-//     ),
+//     visibility: orderedColumns.reduce((acc, col) => {
+//       acc[col.id] = true;
+//       return acc;
+//     }, {} as Record<string, boolean>),
 
-//     sortableColumns: validColumns.map((col) => ({
+//     sortableColumns: orderedColumns.map((col) => ({
 //       id: col.id,
 //       label: col.label,
 //       sortable: true,
+//       backgroundColor: col.backgroundColor,
 //     })),
 //   }));
 // }
-
 export function setData(newData: any[], headers?: Column<any>[]) {
   const firstRow = newData[0] ?? {};
 
@@ -69,7 +87,8 @@ export function setData(newData: any[], headers?: Column<any>[]) {
     Object.prototype.hasOwnProperty.call(firstRow, col.id),
   );
 
-  const { tableId } = tableStore.state;
+  const { tableId, visibility: existingVisibility } = tableStore.state;
+
   const savedOrderIds: string[] = JSON.parse(
     localStorage.getItem(getColumnOrderKey(tableId)) || '[]',
   );
@@ -79,20 +98,21 @@ export function setData(newData: any[], headers?: Column<any>[]) {
     ...validColumns.filter((col) => !savedOrderIds.includes(col.id)),
   ] as Column<any>[];
 
+  const mergedVisibility = orderedColumns.reduce((acc, col) => {
+    acc[col.id] = existingVisibility[col.id] ?? true;
+    return acc;
+  }, {} as Record<string, boolean>);
+
   tableStore.setState((prev) => ({
     ...prev,
     data: newData,
     columnOrder: orderedColumns,
-
-    visibility: orderedColumns.reduce((acc, col) => {
-      acc[col.id] = true;
-      return acc;
-    }, {} as Record<string, boolean>),
-
+    visibility: mergedVisibility,
     sortableColumns: orderedColumns.map((col) => ({
       id: col.id,
       label: col.label,
       sortable: true,
+      backgroundColor: col.backgroundColor,
     })),
   }));
 }
@@ -103,3 +123,10 @@ export function setTableId(tableId: string) {
     tableId,
   }));
 }
+
+export const setActionsConfig = (actionsConfig: ActionHeaderProps) => {
+  tableStore.setState((prev) => ({
+    ...prev,
+    actionsConfig,
+  }));
+};

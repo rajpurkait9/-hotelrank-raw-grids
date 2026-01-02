@@ -10,6 +10,7 @@ export interface Column<T = unknown> {
   align?: 'left' | 'center' | 'right';
   sortable?: boolean;
   format?: (value: unknown, row: T) => React.ReactNode;
+  backgroundColor?: string;
 }
 
 export interface DataTableAction<T = unknown> {
@@ -29,6 +30,15 @@ export interface DataTableAction<T = unknown> {
     | 'pink';
 }
 
+export type ActionHeaderProps = {
+  backgroundColor?: string;
+  children?: React.ReactNode;
+  showActionColumn?: boolean;
+  width?: string;
+  showColumnVisibilityMenu?: boolean;
+  backgroundColorColumnVisibilityMenu?: string;
+};
+
 export interface DataTableProps<T = unknown> {
   tableId: string;
   headers?: Column<T>[];
@@ -43,5 +53,5 @@ export interface DataTableProps<T = unknown> {
   density?: DensityType;
   totalCount?: number;
   paginationMode?: 'server' | 'client';
-  actionHeader?: JSX.Element;
+  actionConfig?: ActionHeaderProps;
 }

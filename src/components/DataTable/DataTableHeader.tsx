@@ -11,7 +11,7 @@ import SortableHeaderCell from './SortableHeaderCell';
 import { tableStore } from './tableStore';
 
 export default function TableHeader() {
-  const { columnOrder, visibility, sortColumn, sortDirection, sortableColumns } =
+  const { columnOrder, visibility, sortColumn, sortDirection, sortableColumns, actionsConfig } =
     useStore(tableStore);
 
   const visibleOrderedColumns = columnOrder
@@ -47,6 +47,7 @@ export default function TableHeader() {
                   onClick={() => col?.sortable && sortByColumn(col?.id)}
                   cursor={col?.sortable ? 'pointer' : 'default'}
                   borderRight="2px solid #dcdcdc"
+                  backgroundColor={col?.backgroundColor}
                 >
                   <span
                     style={{
@@ -73,11 +74,23 @@ export default function TableHeader() {
               );
             })}
 
-            <Table.ColumnHeader borderRight="2px solid #dcdcdc">Actions</Table.ColumnHeader>
-
-            <Table.ColumnHeader boxSize={'0.5'}>
-              <ColumnVisibilityMenu visibility={visibility} onToggle={toggleColumn} />
-            </Table.ColumnHeader>
+            {actionsConfig?.showActionColumn && (
+              <Table.ColumnHeader
+                width={actionsConfig.width}
+                backgroundColor={actionsConfig.backgroundColor}
+                borderRight="2px solid #dcdcdc"
+              >
+                {actionsConfig.children}
+              </Table.ColumnHeader>
+            )}
+            {actionsConfig?.showColumnVisibilityMenu && (
+              <Table.ColumnHeader
+                boxSize={'0.5'}
+                backgroundColor={actionsConfig.backgroundColorColumnVisibilityMenu}
+              >
+                <ColumnVisibilityMenu visibility={visibility} onToggle={toggleColumn} />
+              </Table.ColumnHeader>
+            )}
           </Table.Row>
         </SortableContext>
       </DndContext>
