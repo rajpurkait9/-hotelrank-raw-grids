@@ -1,6 +1,5 @@
 import { Store } from '@tanstack/store';
-// import { COLUMN_ORDER_KEY } from './DataTableActions';
-import { getColumnOrderKey } from './DataTableActions';
+import { getColumnOrderKey, getColumnVisibilityKey } from './DataTableActions';
 import { ActionHeaderProps, Column } from './types';
 
 interface TableState {
@@ -35,46 +34,6 @@ export const tableStore = new Store<TableState>({
   },
 });
 
-// export function setData(newData: any[], headers?: Column<any>[]) {
-//   const firstRow = newData[0] ?? {};
-
-//   const dynamicColumns =
-//     headers && headers.length
-//       ? headers
-//       : Object.keys(firstRow).map((key) => ({ id: key, label: key }));
-
-//   const validColumns = dynamicColumns.filter((col) =>
-//     Object.prototype.hasOwnProperty.call(firstRow, col.id),
-//   );
-
-//   const { tableId } = tableStore.state;
-//   const savedOrderIds: string[] = JSON.parse(
-//     localStorage.getItem(getColumnOrderKey(tableId)) || '[]',
-//   );
-
-//   const orderedColumns: Column<any>[] = [
-//     ...savedOrderIds.map((id) => validColumns.find((c) => c.id === id)).filter(Boolean),
-//     ...validColumns.filter((col) => !savedOrderIds.includes(col.id)),
-//   ] as Column<any>[];
-
-//   tableStore.setState((prev) => ({
-//     ...prev,
-//     data: newData,
-//     columnOrder: orderedColumns,
-
-//     visibility: orderedColumns.reduce((acc, col) => {
-//       acc[col.id] = true;
-//       return acc;
-//     }, {} as Record<string, boolean>),
-
-//     sortableColumns: orderedColumns.map((col) => ({
-//       id: col.id,
-//       label: col.label,
-//       sortable: true,
-//       backgroundColor: col.backgroundColor,
-//     })),
-//   }));
-// }
 export function setData(newData: any[], headers?: Column<any>[]) {
   const firstRow = newData[0] ?? {};
 
@@ -87,7 +46,7 @@ export function setData(newData: any[], headers?: Column<any>[]) {
     Object.prototype.hasOwnProperty.call(firstRow, col.id),
   );
 
-  const { tableId, visibility: existingVisibility } = tableStore.state;
+  const { tableId } = tableStore.state;
 
   const savedOrderIds: string[] = JSON.parse(
     localStorage.getItem(getColumnOrderKey(tableId)) || '[]',
@@ -98,8 +57,12 @@ export function setData(newData: any[], headers?: Column<any>[]) {
     ...validColumns.filter((col) => !savedOrderIds.includes(col.id)),
   ] as Column<any>[];
 
+  const savedVisibility: Record<string, boolean> = JSON.parse(
+    localStorage.getItem(getColumnVisibilityKey(tableId)) || '{}',
+  );
+
   const mergedVisibility = orderedColumns.reduce((acc, col) => {
-    acc[col.id] = existingVisibility[col.id] ?? true;
+    acc[col.id] = savedVisibility[col.id] ?? true;
     return acc;
   }, {} as Record<string, boolean>);
 

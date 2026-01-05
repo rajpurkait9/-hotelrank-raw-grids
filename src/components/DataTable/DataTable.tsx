@@ -3,7 +3,6 @@
 import { Box, Table } from '@chakra-ui/react';
 import { useStore } from '@tanstack/react-store';
 import { useEffect, useMemo } from 'react';
-import { loadColumnVisibility } from './DataTableActions';
 import TableHeader from './DataTableHeader';
 import TablePagination from './DataTablePagination';
 import TableRows from './DataTableRow';
@@ -28,10 +27,10 @@ export default function DataTable<T extends Record<string, unknown>>({
   totalCount = 0,
   paginationMode = 'client',
   actionConfig,
+  pageSizeOptions,
 }: DataTableProps<T>) {
   useEffect(() => {
     setTableId(tableId);
-    loadColumnVisibility(tableId);
   }, [tableId]);
 
   useEffect(() => {
@@ -44,7 +43,7 @@ export default function DataTable<T extends Record<string, unknown>>({
     }
   }, [actionConfig]);
 
-  const { sortColumn, sortDirection, data: newData } = useStore(tableStore);
+  const { sortColumn, sortDirection, data: newData, columnOrder } = useStore(tableStore);
 
   const processedData = useMemo(() => {
     const data = [...newData];
@@ -74,65 +73,44 @@ export default function DataTable<T extends Record<string, unknown>>({
 
   return (
     <Box h="100%" display="flex" flexDirection="column" p={2} pt={2} minHeight={0}>
-      {/* <Box flex="1" minHeight={0} overflow="auto">
-        {loading ? (
-          loadingChildren ? (
-            loadingChildren
-          ) : (
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              h="100%"
-              color="gray.500"
-            >
-              Loading...
-            </Box>
-          )
-        ) : skeletonLoading ? (
-          <DataTableSkeleton rows={9} />
-        ) : processedData.length === 0 ? (
-          <Box display="flex" alignItems="center" justifyContent="center" h="100%" color="gray.500">
-            {emptyMessage}
-          </Box>
-        ) : (
-          <Table.Root variant="outline" w="100%" size={density}>
-            <TableHeader />
-            <TableRows data={processedData} actions={actions} />
-          </Table.Root>
-        )}
-      </Box> */}
-
-      <Box flex="1" minHeight={0} overflow="auto">
+      <Box flex="1" minHeight={0} overflow="auto" h={'100%'}>
         <Table.Root variant="outline" w="100%" size={density}>
           <TableHeader />
 
           {loading ? (
-            loadingChildren ? (
-              loadingChildren
-            ) : (
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                h="120px"
-                color="gray.500"
-              >
-                Loading...
-              </Box>
-            )
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell colSpan={columnOrder.length + (actions ? 1 : 0)}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    h={'83vh'}
+                    w="100%"
+                  >
+                    {loadingChildren ?? 'Loading...'}
+                  </Box>
+                </Table.Cell>
+              </Table.Row>
+            </Table.Body>
           ) : skeletonLoading ? (
-            <DataTableSkeleton rows={pageSize} columns={headers.length + 2} />
+            <DataTableSkeleton rows={pageSize} columns={headers.length + (actions ? 2 : 0)} />
           ) : processedData.length === 0 ? (
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              h="120px"
-              color="gray.500"
-            >
-              {emptyMessage}
-            </Box>
+            <Table.Body>
+              <Table.Row>
+                <Table.Cell colSpan={headers.length + (actions ? 1 : 0)}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    minH="200px"
+                    color="gray.500"
+                  >
+                    {emptyMessage}
+                  </Box>
+                </Table.Cell>
+              </Table.Row>
+            </Table.Body>
           ) : (
             <TableRows data={processedData} actions={actions} />
           )}
@@ -153,6 +131,7 @@ export default function DataTable<T extends Record<string, unknown>>({
               onPageChange(1);
             }
           }}
+          pageSizeOptions={pageSizeOptions}
         />
       </Box>
     </Box>

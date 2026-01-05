@@ -25,7 +25,7 @@ export interface IMainFilterType {
   //   preset props
   pageKey?: string;
   currentFilters?: Record<string, unknown>;
-  onLoadPreset?: (filters: Record<string, unknown>, name: string) => void;
+  onLoadPreset?: (filters: IFilterConfig[], presetName?: string) => void;
   activePresetName?: string | null;
 }
 
@@ -38,8 +38,6 @@ export interface IFilterDrawerProps {
   maxToolbarUnits?: number;
   filterDrawerSize?: 'md' | 'lg' | 'sm';
   pageKey?: string;
-  currentFilters?: Record<string, unknown>;
-  onLoadPreset?: (filters: Record<string, unknown>, name: string) => void;
+  onLoadPreset?: (filters: IFilterConfig[], presetName?: string) => void;
   activePresetName?: string | null;
-
 }

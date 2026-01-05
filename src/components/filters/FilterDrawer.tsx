@@ -107,7 +107,6 @@ export const FiltersDrawer = ({
   onClear,
   filters,
   pageKey = 'default',
-  currentFilters = {},
   onLoadPreset,
   activePresetName,
   onReorder,
@@ -120,11 +119,17 @@ export const FiltersDrawer = ({
   const handleSave = () => {
     const name = prompt('Preset name?');
     if (!name) return;
+
+    const values = filters.reduce((acc, f) => {
+      acc[f.id] = f.value;
+      return acc;
+    }, {} as Record<string, any>);
+
     addPreset(pageKey, {
       id: crypto.randomUUID(),
       name,
       date: new Date().toISOString(),
-      filters: currentFilters,
+      values,
     });
   };
 
@@ -217,10 +222,6 @@ export const FiltersDrawer = ({
                   {/* PRESETS */}
                   <TabsContent value="presets">
                     <VStack align="stretch" mb={3}>
-                      <Button size="sm" colorScheme="blue" onClick={handleSave}>
-                        Save Current Filters
-                      </Button>
-
                       {presets.length === 0 && (
                         <Text fontSize="xs" color="gray.500">
                           No presets saved yet.
@@ -249,7 +250,14 @@ export const FiltersDrawer = ({
                             <Button
                               size="xs"
                               variant="ghost"
-                              onClick={() => onLoadPreset?.(p.filters, p.name)}
+                              onClick={() => {
+                                const updatedFilters = filters.map((f) => ({
+                                  ...f,
+                                  value: p.values[f.id] ?? f.value,
+                                }));
+
+                                onLoadPreset?.(updatedFilters, p.name);
+                              }}
                             >
                               Load
                             </Button>
@@ -265,20 +273,24 @@ export const FiltersDrawer = ({
                           </HStack>
                         </HStack>
                       ))}
+
+                      <Button size="sm" colorScheme="blue" onClick={handleSave}>
+                        Save Current Filters
+                      </Button>
                     </VStack>
                   </TabsContent>
                 </TabsRoot>
               </DrawerBody>
 
               <DrawerFooter justify="space-between">
-                <Button
+                {/* <Button
                   size="sm"
                   variant="ghost"
                   colorScheme="red"
                   onClick={() => onClear && onClear()}
                 >
                   Clear All
-                </Button>
+                </Button> */}
 
                 <DrawerCloseTrigger asChild>
                   <CloseButton />

@@ -36,7 +36,6 @@ const SortableFilterItem = ({ filter, onVisibilityChange, onSizeChange }) => {
       mb={3}
       bg="white"
     >
-      {/* DRAG HANDLE */}
       <HStack {...attributes} {...listeners} cursor="grab" userSelect="none" gap={2}>
         <GripVertical size={16} />
         <Text fontWeight="bold" fontSize="sm">
@@ -44,7 +43,6 @@ const SortableFilterItem = ({ filter, onVisibilityChange, onSizeChange }) => {
         </Text>
       </HStack>
 
-      {/* VISIBILITY */}
       <HStack justify="space-between">
         <Text fontSize="sm">Visible</Text>
         <CheckboxRoot
@@ -57,7 +55,6 @@ const SortableFilterItem = ({ filter, onVisibilityChange, onSizeChange }) => {
         </CheckboxRoot>
       </HStack>
 
-      {/* SIZE */}
       <VStack align="stretch" gap={1}>
         <Text fontSize="sm">Size</Text>
         <SliderRoot

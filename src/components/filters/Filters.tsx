@@ -12,7 +12,6 @@ export const FiltersToolBar = ({
   onClear,
   maxToolbarUnits,
   pageKey,
-  currentFilters,
   onLoadPreset,
   activePresetName,
   filterDrawerSize = 'sm',
@@ -45,7 +44,6 @@ export const FiltersToolBar = ({
           maxToolbarUnits={maxToolbarUnits}
           pageKey={pageKey}
           filters={filters}
-          currentFilters={currentFilters}
           onLoadPreset={onLoadPreset}
           activePresetName={activePresetName}
           open={drawerOpen}

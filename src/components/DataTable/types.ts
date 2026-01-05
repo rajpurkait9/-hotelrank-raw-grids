@@ -56,4 +56,5 @@ export interface DataTableProps<T = unknown> {
   actionConfig?: ActionHeaderProps;
   loadingChildren?: JSX.Element;
   skeletonLoading?: boolean;
+  pageSizeOptions?: number[];
 }

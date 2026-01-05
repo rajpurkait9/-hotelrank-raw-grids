@@ -14,15 +14,6 @@ export const setColumnOrder = (order: Column<any>[]) => {
   }));
   tableStore.setState((s) => ({ ...s, columnOrder: order }));
 };
-
-// export const toggleColumn = (id: string) => {
-
-//   tableStore.setState((s) => ({
-//     ...s,
-//     visibility: { ...s.visibility, [id]: !s.visibility[id] },
-//   }));
-// };
-
 export function sortByColumn(columnId: string) {
   tableStore.setState((s) => {
     if (s.sortColumn === columnId) {
@@ -86,3 +77,25 @@ export const resetColumnVisibility = () => {
     };
   });
 };
+
+interface GetVisibleOrderedColumnsArgs {
+  columnOrder: Column<any>[];
+  sortableColumns: {
+    id: string;
+    label: string;
+    sortable: boolean;
+    backgroundColor?: string;
+  }[];
+  visibility: Record<string, boolean>;
+}
+
+export function getVisibleOrderedColumns({
+  columnOrder,
+  sortableColumns,
+  visibility,
+}: GetVisibleOrderedColumnsArgs) {
+  return columnOrder
+    .map((orderCol) => sortableColumns.find((c) => c.id === orderCol.id))
+    .filter((col): col is NonNullable<typeof col> => Boolean(col))
+    .filter((col) => visibility[col.id]);
+}

@@ -19,6 +19,7 @@ function App() {
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
+  const [activePresetName, setActivePresetName] = useState<string | null>(null);
 
   const [filters, setFilters] = useState<IFilterConfig[]>([
     {
@@ -137,9 +138,10 @@ function App() {
         pageKey="demo"
         currentFilters={activeFilterState}
         onLoadPreset={(filters, name) => {
-          console.log('Loaded preset:', name, filters);
+          setFilters(filters);
+          setActivePresetName(name ?? null);
         }}
-        activePresetName={null}
+        activePresetName={activePresetName}
       />
 
       <DataTable
@@ -148,12 +150,14 @@ function App() {
         tableId="onslldj"
         // loading={true}
         // skeletonLoading
+        // loadingChildren={<Spinner size={'sm'} />}
         page={page}
         totalCount={dummyData.length}
         onPageChange={(page) => setPage(page)}
         onPageSizeChange={(pageSize) => setPageSize(pageSize)}
         headers={headers}
         key={'something'}
+        pageSizeOptions={[5, 8, 10]}
         actions={[
           {
             icon: <Edit size={14} />,

@@ -1,30 +1,43 @@
 // presetStore.ts
-import { Store } from "@tanstack/store";
+import { Store } from '@tanstack/store';
 
 export interface PresetItem {
   id: string;
   name: string;
   date: string;
-  filters: any;
+  values: Record<string, any>; // 👈 filterId → value
 }
 
-const storageKey = (pageKey?: string) =>
-  `FILTER_PRESETS_${pageKey ?? "default"}`;
+type PresetState = Record<string, PresetItem[]>;
 
-function loadInitial(pageKey: string) {
+const storageKey = (pageKey = 'default') => `FILTER_PRESETS_${pageKey}`;
+
+const safeParse = (value: string | null): PresetItem[] => {
+  if (!value) return [];
   try {
-    return JSON.parse(localStorage.getItem(storageKey(pageKey)) || "[]");
+    return JSON.parse(value);
   } catch {
     return [];
   }
-}
+};
 
-export const presetStore = new Store<Record<string, PresetItem[]>>({});
+const loadInitial = (pageKey: string): PresetItem[] => {
+  if (typeof window === 'undefined') return [];
+  return safeParse(localStorage.getItem(storageKey(pageKey)));
+};
 
+export const presetStore = new Store<PresetState>({});
 
+/**
+ * Get presets for a page.
+ * Loads once from localStorage and caches in store.
+ */
 export const getPresets = (pageKey: string): PresetItem[] => {
-  const current = presetStore.state[pageKey];
-  if (current) return current;
+  const state = presetStore.state;
+
+  if (pageKey in state) {
+    return state[pageKey];
+  }
 
   const loaded = loadInitial(pageKey);
 
@@ -42,7 +55,14 @@ export const savePresets = (pageKey: string, items: PresetItem[]) => {
     [pageKey]: items,
   }));
 
-  localStorage.setItem(storageKey(pageKey), JSON.stringify(items));
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(storageKey(pageKey), JSON.stringify(items));
+  }
+};
+
+export const addPreset = (pageKey: string, item: PresetItem) => {
+  const next = [item, ...getPresets(pageKey)];
+  savePresets(pageKey, next);
 };
 
 export const deletePreset = (pageKey: string, id: string) => {
@@ -50,7 +70,13 @@ export const deletePreset = (pageKey: string, id: string) => {
   savePresets(pageKey, next);
 };
 
-export const addPreset = (pageKey: string, item: PresetItem) => {
-  const next = [item, ...getPresets(pageKey)];
+export const updatePreset = (
+  pageKey: string,
+  id: string,
+  updater: (preset: PresetItem) => PresetItem,
+) => {
+  const next = getPresets(pageKey).map((p) =>
+    p.id === id ? updater(p) : p,
+  );
   savePresets(pageKey, next);
 };

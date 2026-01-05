@@ -3,13 +3,13 @@
 import {
   Box,
   ButtonGroup,
+  createListCollection,
   HStack,
   IconButton,
   Pagination,
   Portal,
   Select,
   Text,
-  createListCollection,
 } from '@chakra-ui/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { withChildren } from '../../utils/chakra-slot';
@@ -20,16 +20,10 @@ interface TablePaginationProps {
   siblingCount?: number;
   onPageChange?: (page: number) => void | undefined;
   onPageSizeChange?: (size: number) => void | undefined;
+  pageSizeOptions?: number[];
 }
 
-const frameworks = createListCollection({
-  items: [
-    { label: '10', value: '10' },
-    { label: '20', value: '20' },
-    { label: '50', value: '50' },
-    { label: '100', value: '100' },
-  ],
-});
+const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 
 const SelectPositioner = withChildren(Select.Positioner);
 const SelectContent = withChildren(Select.Content);
@@ -50,23 +44,27 @@ export default function TablePagination({
   onPageChange,
   onPageSizeChange,
   siblingCount = 2,
+  pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
 }: TablePaginationProps) {
+  const pageSizeCollection = createListCollection({
+    items: pageSizeOptions.map((size) => ({
+      label: String(size),
+      value: String(size),
+    })),
+  });
   return (
     <Box width="100%">
       <HStack justify="space-between" mx="auto" flexWrap="wrap">
-        {/* PAGE SIZE SELECT */}
         <HStack>
           <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
             Rows per page:
           </Text>
 
           <Select.Root
-            collection={frameworks}
+            collection={pageSizeCollection}
             size="sm"
             width="60px"
-            onValueChange={(value) =>
-              onPageSizeChange && onPageSizeChange(Number(value.items[0].value))
-            }
+            onValueChange={(value) => onPageSizeChange?.(Number(value.items[0].value))}
             value={[String(pageSize)]}
           >
             <SelectHiddenSelect />
@@ -81,7 +79,7 @@ export default function TablePagination({
             <Portal>
               <SelectPositioner>
                 <SelectContent>
-                  {frameworks.items.map((framework) => (
+                  {pageSizeCollection.items.map((framework) => (
                     <SelectItem item={framework.value} key={framework.value}>
                       {framework.label}
                       <Select.ItemIndicator />

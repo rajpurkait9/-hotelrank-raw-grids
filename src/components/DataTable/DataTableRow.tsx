@@ -24,7 +24,12 @@ export default function TableRows({
   return (
     <Table.Body>
       {data.map((row) => (
-        <Table.Row key={row.id}>
+        <Table.Row
+          key={row.id}
+          _hover={{
+            bg: 'blue.50',
+          }}
+        >
           {columnOrder
             .filter((id) => visibility[id.id])
             .map((id) => (
@@ -57,6 +62,7 @@ export default function TableRows({
               </Portal>
             </Menu.Root>
           </Table.Cell>
+          <Table.Cell></Table.Cell>
         </Table.Row>
       ))}
     </Table.Body>
