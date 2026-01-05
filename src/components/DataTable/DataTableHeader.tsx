@@ -31,7 +31,7 @@ export default function TableHeader() {
   };
 
   return (
-    <Table.Header background={'blue.200'} position="sticky" top={0} p="0">
+    <Table.Header background={'blue.200'} position="sticky" top={0} p="0" zIndex={1}>
       <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
         <SortableContext
           items={columnOrder.map((col) => col.id)}

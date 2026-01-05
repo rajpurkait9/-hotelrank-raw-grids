@@ -7,6 +7,7 @@ import { loadColumnVisibility } from './DataTableActions';
 import TableHeader from './DataTableHeader';
 import TablePagination from './DataTablePagination';
 import TableRows from './DataTableRow';
+import DataTableSkeleton from './DataTableSkeleton';
 import { setActionsConfig, setData, setTableId, tableStore } from './tableStore';
 import { DataTableProps } from './types';
 
@@ -15,6 +16,8 @@ export default function DataTable<T extends Record<string, unknown>>({
   data: rowData = [],
   headers = [],
   loading = false,
+  loadingChildren,
+  skeletonLoading = false,
   emptyMessage = 'No data',
   actions,
   page = 1,
@@ -71,11 +74,23 @@ export default function DataTable<T extends Record<string, unknown>>({
 
   return (
     <Box h="100%" display="flex" flexDirection="column" p={2} pt={2} minHeight={0}>
-      <Box flex="1" minHeight={0} overflow="auto">
+      {/* <Box flex="1" minHeight={0} overflow="auto">
         {loading ? (
-          <Box display="flex" alignItems="center" justifyContent="center" h="100%" color="gray.500">
-            Loading...
-          </Box>
+          loadingChildren ? (
+            loadingChildren
+          ) : (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              h="100%"
+              color="gray.500"
+            >
+              Loading...
+            </Box>
+          )
+        ) : skeletonLoading ? (
+          <DataTableSkeleton rows={9} />
         ) : processedData.length === 0 ? (
           <Box display="flex" alignItems="center" justifyContent="center" h="100%" color="gray.500">
             {emptyMessage}
@@ -86,6 +101,42 @@ export default function DataTable<T extends Record<string, unknown>>({
             <TableRows data={processedData} actions={actions} />
           </Table.Root>
         )}
+      </Box> */}
+
+      <Box flex="1" minHeight={0} overflow="auto">
+        <Table.Root variant="outline" w="100%" size={density}>
+          <TableHeader />
+
+          {loading ? (
+            loadingChildren ? (
+              loadingChildren
+            ) : (
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                h="120px"
+                color="gray.500"
+              >
+                Loading...
+              </Box>
+            )
+          ) : skeletonLoading ? (
+            <DataTableSkeleton rows={pageSize} columns={headers.length + 2} />
+          ) : processedData.length === 0 ? (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              h="120px"
+              color="gray.500"
+            >
+              {emptyMessage}
+            </Box>
+          ) : (
+            <TableRows data={processedData} actions={actions} />
+          )}
+        </Table.Root>
       </Box>
 
       <Box mt={0.5}>

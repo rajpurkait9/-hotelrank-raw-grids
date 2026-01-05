@@ -146,6 +146,8 @@ function App() {
         data={dummyData}
         pageSize={pageSize}
         tableId="onslldj"
+        // loading={true}
+        // skeletonLoading
         page={page}
         totalCount={dummyData.length}
         onPageChange={(page) => setPage(page)}

@@ -54,4 +54,6 @@ export interface DataTableProps<T = unknown> {
   totalCount?: number;
   paginationMode?: 'server' | 'client';
   actionConfig?: ActionHeaderProps;
+  loadingChildren?: JSX.Element;
+  skeletonLoading?: boolean;
 }
