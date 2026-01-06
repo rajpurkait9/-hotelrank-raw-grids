@@ -12,6 +12,7 @@ export * from './utils/chakra-slot';
 
 export { default as MDSButton } from './components/chakra-compo/Button';
 export { default as MDSCheckbox } from './components/chakra-compo/CheckBox';
+export { default as MDSCombobox } from './components/chakra-compo/Combobox';
 export { default as MDSConfirmDeleteDialog } from './components/chakra-compo/DeleteDialogBox';
 export { default as MDSInput } from './components/chakra-compo/Input';
 export {

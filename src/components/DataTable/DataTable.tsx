@@ -85,7 +85,7 @@ export default function DataTable<T extends Record<string, unknown>>({
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    h={'83vh'}
+                    h={'81vh'}
                     w="100%"
                   >
                     {loadingChildren ?? 'Loading...'}

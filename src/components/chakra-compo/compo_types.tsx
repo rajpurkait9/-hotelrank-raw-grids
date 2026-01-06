@@ -1,4 +1,4 @@
-import { ConditionalValue } from '@chakra-ui/react';
+import { ComboboxInputProps, ComboboxRootProps, ConditionalValue } from '@chakra-ui/react';
 
 export interface IMDSInputTypes {
   icon?: React.ReactNode;
@@ -66,6 +66,33 @@ export interface IMDSButtonTypes {
   rounded?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'xs';
   type?: 'submit' | 'reset' | 'button';
 }
+
+export interface IMDSComboboxTypes<T> {
+  label?: string;
+  size?: 'sm' | 'md' | 'lg';
+  width?: string | number;
+  variant?: 'outline' | 'subtle';
+
+  items?: T[];
+  loading?: boolean;
+  error?: boolean;
+  placeholder?: string;
+
+  itemToString: (item: T) => string;
+  itemToValue: (item: T) => string;
+  renderItem: (item: T) => React.ReactNode;
+
+  onInputChange?: (value: string) => void;
+  onSelect?: (item: T) => void;
+
+  // 🔥 SLOT PROPS
+  rootProps?: Partial<ComboboxRootProps>;
+  inputProps?: Partial<ComboboxInputProps>;
+  controlProps?: any;
+  contentProps?: any;
+  itemProps?: any;
+}
+
 
 export interface ConfirmDeleteDialogProps {
   open: boolean;

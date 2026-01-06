@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react';
+import { Spinner, Text } from '@chakra-ui/react';
 import { Edit, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import MDSConfirmDeleteDialog from './components/chakra-compo/DeleteDialogBox';
@@ -148,9 +148,9 @@ function App() {
         data={dummyData}
         pageSize={pageSize}
         tableId="onslldj"
-        // loading={true}
+        loading={true}
         // skeletonLoading
-        // loadingChildren={<Spinner size={'sm'} />}
+        loadingChildren={<Spinner size={'sm'} />}
         page={page}
         totalCount={dummyData.length}
         onPageChange={(page) => setPage(page)}

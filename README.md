@@ -268,12 +268,3 @@ Full-stack engineer focused on **performance-first UI systems**.
 MIT — free, open-source, forever.
 
 ---
-
-If you want, next I can:
-
-* tighten this README for npm
-* add architecture diagrams
-* write contribution guidelines
-* extract this into a mono-repo-ready package
-
-Just say the word.
