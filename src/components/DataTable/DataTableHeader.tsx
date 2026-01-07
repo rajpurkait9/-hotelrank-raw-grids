@@ -1,5 +1,3 @@
-'use client';
-
 import { Table } from '@chakra-ui/react';
 import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, arrayMove, horizontalListSortingStrategy } from '@dnd-kit/sortable';

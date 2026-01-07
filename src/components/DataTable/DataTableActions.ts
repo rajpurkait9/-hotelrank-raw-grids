@@ -14,6 +14,7 @@ export const setColumnOrder = (order: Column<any>[]) => {
   }));
   tableStore.setState((s) => ({ ...s, columnOrder: order }));
 };
+
 export function sortByColumn(columnId: string) {
   tableStore.setState((s) => {
     if (s.sortColumn === columnId) {

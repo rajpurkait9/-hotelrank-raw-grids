@@ -84,6 +84,10 @@ export function setTableId(tableId: string) {
   tableStore.setState((prev) => ({
     ...prev,
     tableId,
+    sortColumn: null,
+    sortDirection: 'asc',
+    columnOrder: [],
+    visibility: {},
   }));
 }
 
