@@ -36,12 +36,12 @@ function MDSConfirmDeleteDialog({
         <DialogBackdrop />
         <DialogPositioner>
           <DialogContent maxW="520px">
-            <DialogHeader borderBottom="1px solid" borderColor="red.200" boxShadow="sm">
+            <DialogHeader borderBottom="1px solid" borderColor="gray.200">
               <DialogTitle color="red.600">{title}</DialogTitle>
             </DialogHeader>
 
-            <DialogBody>
-              <Stack gap={4} boxShadow={'lg'} border="1px solid gray.200" borderRadius="md" p={4}>
+            <DialogBody bg="gray.50" p={2}>
+              <Stack gap={4} borderRadius="md" p={3} bg="white">
                 <Box border="1px solid" borderColor="red.200" bg="red.50" borderRadius="md" p={4}>
                   <Stack direction="row" gap={3} align="flex-start">
                     <Box color="red.600" mt="2px">
@@ -63,7 +63,7 @@ function MDSConfirmDeleteDialog({
                 </Text>
 
                 <Box>
-                  <Text fontSize="sm" mb={1}>
+                  <Text fontSize="sm" mb={2}>
                     Type <b>{confirmText}</b> to continue
                   </Text>
                   <Input
@@ -78,10 +78,9 @@ function MDSConfirmDeleteDialog({
 
             <DialogFooter
               justifyContent="flex-end"
-              gap={3}
+              gap={2}
               borderTop="1px solid"
-              borderColor="red.200"
-              boxShadow="lg"
+              borderColor="gray.200"
             >
               <Button variant="outline" size="sm" onClick={onClose}>
                 Cancel

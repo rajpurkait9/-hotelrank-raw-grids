@@ -148,7 +148,7 @@ function App() {
         data={dummyData}
         pageSize={pageSize}
         tableId="onslldj"
-        loading={true}
+        // loading={true}
         // skeletonLoading
         loadingChildren={<Spinner size={'sm'} />}
         page={page}
