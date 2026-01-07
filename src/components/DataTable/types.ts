@@ -17,6 +17,7 @@ export interface DataTableAction<T = unknown> {
   icon: JSX.Element;
   label: string;
   onClick: (row: T) => void;
+  visible?: boolean;
   colorScheme?:
     | 'gray'
     | 'red'

@@ -10,7 +10,7 @@ import { dummyData } from './dummy/data';
 
 const headers = [
   { id: 'id', label: 'ID' },
-  { id: 'name', label: 'User Name', backgroundColor: 'orange.400' },
+  { id: 'name', label: 'User Name' },
   { id: 'email', label: 'Email' },
   { id: 'role', label: 'Role' },
 ];
@@ -148,7 +148,7 @@ function App() {
         data={dummyData}
         pageSize={pageSize}
         tableId="onslldj"
-        // loading={true}
+        loading={false}
         // skeletonLoading
         loadingChildren={<Spinner size={'sm'} />}
         page={page}
@@ -164,12 +164,14 @@ function App() {
             label: 'Edit',
             onClick: () => console.log('Edit'),
             colorScheme: 'blue',
+            // visible: true,
           },
           {
             icon: <Trash size={14} />,
             label: 'Delete',
             onClick: () => setOpen(true),
             colorScheme: 'red',
+            visible: false,
           },
         ]}
       />

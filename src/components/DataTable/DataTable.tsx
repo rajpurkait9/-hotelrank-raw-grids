@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Table } from '@chakra-ui/react';
+import { Box, Spinner, Table } from '@chakra-ui/react';
 import { useStore } from '@tanstack/react-store';
 import { useEffect, useMemo } from 'react';
 import TableHeader from './DataTableHeader';
@@ -71,31 +71,33 @@ export default function DataTable<T extends Record<string, unknown>>({
     }
   }, [page, onPageChange]);
 
+  const showOverlayLoader = loading && !skeletonLoading;
+  const showSkeleton = skeletonLoading && !loading;
+  const showEmpty = !loading && !skeletonLoading && processedData.length === 0;
+
   return (
-    <Box h="100%" display="flex" flexDirection="column" p={2} pt={2} minHeight={0}>
-      <Box flex="1" minHeight={0} overflow="auto" h={'100%'}>
+    <Box flex="1" minH={0} display="flex" flexDirection="column" p={2}>
+      <Box flex="1" minH={0} position="relative" overflow="auto">
+        {showOverlayLoader && (
+          <Box
+            position="absolute"
+            inset={0}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            zIndex={10}
+            bg="whiteAlpha.600"
+          >
+            {loadingChildren ?? <Spinner />}
+          </Box>
+        )}
+
         <Table.Root variant="outline" w="100%" size={density}>
           <TableHeader />
 
-          {loading ? (
-            <Table.Body>
-              <Table.Row>
-                <Table.Cell colSpan={columnOrder.length + (actions ? 1 : 0)}>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    h={'81vh'}
-                    w="100%"
-                  >
-                    {loadingChildren ?? 'Loading...'}
-                  </Box>
-                </Table.Cell>
-              </Table.Row>
-            </Table.Body>
-          ) : skeletonLoading ? (
+          {showSkeleton ? (
             <DataTableSkeleton rows={pageSize} columns={headers.length + (actions ? 2 : 0)} />
-          ) : processedData.length === 0 ? (
+          ) : showEmpty ? (
             <Table.Body>
               <Table.Row>
                 <Table.Cell colSpan={headers.length + (actions ? 1 : 0)}>
@@ -124,12 +126,8 @@ export default function DataTable<T extends Record<string, unknown>>({
           currentPage={page}
           onPageChange={onPageChange}
           onPageSizeChange={(s) => {
-            if (onPageSizeChange) {
-              onPageSizeChange(s);
-            }
-            if (page > 1 && onPageChange) {
-              onPageChange(1);
-            }
+            onPageSizeChange?.(s);
+            if (page > 1) onPageChange?.(1);
           }}
           pageSizeOptions={pageSizeOptions}
         />

@@ -46,17 +46,19 @@ export default function TableRows({
               <Portal>
                 <MenuPositioner>
                   <MenuContent>
-                    {actions.map((action) => (
-                      <MenuItem
-                        key={action.label}
-                        onClick={() => action.onClick(row)}
-                        colorScheme={action.colorScheme}
-                        value={action.label}
-                      >
-                        {action.icon}
-                        {action.label}
-                      </MenuItem>
-                    ))}
+                    {actions
+                      .filter((action) => action.visible !== false)
+                      .map((action) => (
+                        <MenuItem
+                          key={action.label}
+                          onClick={() => action.onClick(row)}
+                          colorScheme={action.colorScheme}
+                          value={action.label}
+                        >
+                          {action.icon}
+                          {action.label}
+                        </MenuItem>
+                      ))}
                   </MenuContent>
                 </MenuPositioner>
               </Portal>

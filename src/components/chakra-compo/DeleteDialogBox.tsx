@@ -35,13 +35,18 @@ function MDSConfirmDeleteDialog({
       <Portal>
         <DialogBackdrop />
         <DialogPositioner>
-          <DialogContent maxW="520px">
-            <DialogHeader borderBottom="1px solid" borderColor="gray.200">
+          <DialogContent maxW="550px">
+            <DialogHeader borderBottom="1px solid" borderColor="#d3d3d3">
               <DialogTitle color="red.600">{title}</DialogTitle>
             </DialogHeader>
 
-            <DialogBody bg="gray.50" p={2}>
-              <Stack gap={4} borderRadius="md" p={3} bg="white">
+            <DialogBody
+              p={2}
+              style={{
+                padding: '16px',
+              }}
+            >
+              <Stack gap={4} borderRadius="md" p={4} bg="white">
                 <Box border="1px solid" borderColor="red.200" bg="red.50" borderRadius="md" p={4}>
                   <Stack direction="row" gap={3} align="flex-start">
                     <Box color="red.600" mt="2px">
@@ -80,7 +85,7 @@ function MDSConfirmDeleteDialog({
               justifyContent="flex-end"
               gap={2}
               borderTop="1px solid"
-              borderColor="gray.200"
+              borderColor="#d3d3d3"
             >
               <Button variant="outline" size="sm" onClick={onClose}>
                 Cancel
