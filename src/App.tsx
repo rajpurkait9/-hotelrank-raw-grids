@@ -171,7 +171,7 @@ function App() {
             label: 'Delete',
             onClick: () => setOpen(true),
             colorScheme: 'red',
-            visible: false,
+            visible: (row) => row.id % 2 === 0,
           },
         ]}
       />

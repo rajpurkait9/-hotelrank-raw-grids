@@ -47,7 +47,11 @@ export default function TableRows({
                 <MenuPositioner>
                   <MenuContent>
                     {actions
-                      .filter((action) => action.visible !== false)
+                      .filter((action) =>
+                        typeof action.visible === 'function'
+                          ? action.visible(row)
+                          : action.visible !== false,
+                      )
                       .map((action) => (
                         <MenuItem
                           key={action.label}

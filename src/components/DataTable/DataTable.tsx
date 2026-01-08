@@ -1,8 +1,11 @@
 'use client';
 
 import { Box, Spinner, Table } from '@chakra-ui/react';
+import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { useStore } from '@tanstack/react-store';
 import { useEffect, useMemo } from 'react';
+import { setColumnOrder } from './DataTableActions';
 import TableHeader from './DataTableHeader';
 import TablePagination from './DataTablePagination';
 import TableRows from './DataTableRow';
@@ -71,67 +74,85 @@ export default function DataTable<T extends Record<string, unknown>>({
     }
   }, [page, onPageChange]);
 
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = columnOrder.findIndex((col) => col.id === active.id);
+    const newIndex = columnOrder.findIndex((col) => col.id === over.id);
+
+    const newOrder = arrayMove(columnOrder, oldIndex, newIndex);
+    setColumnOrder(newOrder);
+  };
+
   const showOverlayLoader = loading && !skeletonLoading;
   const showSkeleton = skeletonLoading && !loading;
   const showEmpty = !loading && !skeletonLoading && processedData.length === 0;
 
   return (
-    <Box flex="1" minH={0} display="flex" flexDirection="column" p={2}>
-      <Box flex="1" minH={0} position="relative" overflow="auto">
-        {showOverlayLoader && (
-          <Box
-            position="absolute"
-            inset={0}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            zIndex={10}
-            bg="whiteAlpha.600"
-          >
-            {loadingChildren ?? <Spinner />}
+    <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+      <SortableContext
+        items={columnOrder.map((c) => c.id)}
+        strategy={horizontalListSortingStrategy}
+      >
+        <Box flex="1" minH={0} display="flex" flexDirection="column" p={2}>
+          <Box flex="1" minH={0} position="relative" overflow="auto">
+            {showOverlayLoader && (
+              <Box
+                position="absolute"
+                inset={0}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                zIndex={10}
+                bg="whiteAlpha.600"
+              >
+                {loadingChildren ?? <Spinner />}
+              </Box>
+            )}
+
+            <Table.Root variant="outline" w="100%" size={density}>
+              <TableHeader />
+
+              {showSkeleton ? (
+                <DataTableSkeleton rows={pageSize} columns={headers.length + (actions ? 2 : 0)} />
+              ) : showEmpty ? (
+                <Table.Body>
+                  <Table.Row>
+                    <Table.Cell colSpan={headers.length + (actions ? 1 : 0)}>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        minH="200px"
+                        color="gray.500"
+                      >
+                        {emptyMessage}
+                      </Box>
+                    </Table.Cell>
+                  </Table.Row>
+                </Table.Body>
+              ) : (
+                <TableRows data={processedData} actions={actions} />
+              )}
+            </Table.Root>
           </Box>
-        )}
 
-        <Table.Root variant="outline" w="100%" size={density}>
-          <TableHeader />
-
-          {showSkeleton ? (
-            <DataTableSkeleton rows={pageSize} columns={headers.length + (actions ? 2 : 0)} />
-          ) : showEmpty ? (
-            <Table.Body>
-              <Table.Row>
-                <Table.Cell colSpan={headers.length + (actions ? 1 : 0)}>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    minH="200px"
-                    color="gray.500"
-                  >
-                    {emptyMessage}
-                  </Box>
-                </Table.Cell>
-              </Table.Row>
-            </Table.Body>
-          ) : (
-            <TableRows data={processedData} actions={actions} />
-          )}
-        </Table.Root>
-      </Box>
-
-      <Box mt={0.5}>
-        <TablePagination
-          totalCount={totalCount}
-          pageSize={pageSize}
-          currentPage={page}
-          onPageChange={onPageChange}
-          onPageSizeChange={(s) => {
-            onPageSizeChange?.(s);
-            if (page > 1) onPageChange?.(1);
-          }}
-          pageSizeOptions={pageSizeOptions}
-        />
-      </Box>
-    </Box>
+          <Box mt={0.5}>
+            <TablePagination
+              totalCount={totalCount}
+              pageSize={pageSize}
+              currentPage={page}
+              onPageChange={onPageChange}
+              onPageSizeChange={(s) => {
+                onPageSizeChange?.(s);
+                if (page > 1) onPageChange?.(1);
+              }}
+              pageSizeOptions={pageSizeOptions}
+            />
+          </Box>
+        </Box>
+      </SortableContext>
+    </DndContext>
   );
 }
