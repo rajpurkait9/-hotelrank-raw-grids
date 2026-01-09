@@ -79,6 +79,7 @@ export interface IMDSComboboxTypes<T> {
   placeholder?: string;
   helpText?: string;
   errorMessage?: string;
+  value?: T | null;
 
   itemToString: (item: T) => string;
   itemToValue: (item: T) => string;
@@ -106,7 +107,6 @@ export interface ConfirmDeleteDialogProps {
   confirmLabel?: string; // button text
   isLoading?: boolean;
 }
-
 
 // compo_types.ts
 export interface ConfirmActionDialogProps {

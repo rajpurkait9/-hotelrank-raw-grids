@@ -4,7 +4,6 @@ import { withChildren } from '../../utils/chakra-slot';
 import type { IMDSComboboxTypes } from './compo_types';
 
 const ComboboxRoot = withChildren(Combobox.Root);
-const ComboboxLabel = withChildren(Combobox.Label);
 const ComboboxControl = withChildren(Combobox.Control);
 const ComboboxInput = withChildren(Combobox.Input);
 const ComboboxIndicatorGroup = withChildren(Combobox.IndicatorGroup);
@@ -23,6 +22,7 @@ export default function MDSCombobox<T>({
   itemToString,
   itemToValue,
   renderItem,
+  value,
 
   loading,
   error,
@@ -59,6 +59,12 @@ export default function MDSCombobox<T>({
     set(filteredItems);
   }, [filteredItems, set]);
 
+  useEffect(() => {
+    if (value) {
+      setInputValue(itemToString(value));
+    }
+  }, [value, itemToString]);
+
   return (
     <ComboboxRoot
       width={width}
@@ -70,6 +76,7 @@ export default function MDSCombobox<T>({
         onInputChange?.(e.inputValue);
         setInputValue(e.inputValue);
       }}
+      value={value ? [itemToValue(value)] : []}
       onValueChange={(e) => {
         const value = e.value?.[0];
         if (!value) return;
