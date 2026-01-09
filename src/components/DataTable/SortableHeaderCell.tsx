@@ -29,7 +29,7 @@ export default function SortableHeaderCell({
       ref={setNodeRef}
       onClick={onClick}
       backgroundColor={backgroundColor}
-      w={id === 'id' ? '80px' : undefined}
+      w={id === 'id' || id === 'row_number' ? '80px' : undefined}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,

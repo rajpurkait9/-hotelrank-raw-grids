@@ -1,5 +1,5 @@
 import { Spinner, Text } from '@chakra-ui/react';
-import { Edit, Trash } from 'lucide-react';
+import { Trash, View } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import MDSConfirmDeleteDialog from './components/chakra-compo/DeleteDialogBox';
 import { DataTable } from './components/DataTable';
@@ -7,6 +7,7 @@ import { IFilterConfig } from './components/filters';
 import { FiltersToolBar } from './components/filters/Filters';
 import { loadOrder, saveOrder } from './components/filters/reorderStore';
 import { dummyData } from './dummy/data';
+import MDSConfirmActionDialog from './components/chakra-compo/ConfirmDialogBox';
 
 const headers = [
   { id: 'id', label: 'ID' },
@@ -19,6 +20,7 @@ function App() {
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false); // [id, ]
   const [activePresetName, setActivePresetName] = useState<string | null>(null);
 
   const [filters, setFilters] = useState<IFilterConfig[]>([
@@ -145,7 +147,12 @@ function App() {
       />
 
       <DataTable
-        data={dummyData}
+        data={dummyData.map((item, i) => ({
+          ...item,
+          id: item.id + i,
+          __raw: item,
+          __key: item.id,
+        }))}
         pageSize={pageSize}
         tableId="onslldj"
         loading={false}
@@ -160,9 +167,9 @@ function App() {
         pageSizeOptions={[5, 8, 10]}
         actions={[
           {
-            icon: <Edit size={14} />,
-            label: 'Edit',
-            onClick: () => console.log('Edit'),
+            icon: <View size={14} />,
+            label: 'Confirm',
+            onClick: () => setOpenConfirm(true),
             colorScheme: 'blue',
             // visible: true,
           },
@@ -171,7 +178,7 @@ function App() {
             label: 'Delete',
             onClick: () => setOpen(true),
             colorScheme: 'red',
-            visible: (row) => row.id % 2 === 0,
+            visible: (row) => row.__key % 2 === 0,
           },
         ]}
       />
@@ -184,6 +191,16 @@ function App() {
         entityName="Company"
         confirmText="DELETE"
         confirmLabel="Delete"
+        isLoading={false}
+      />
+      <MDSConfirmActionDialog
+        open={openConfirm}
+        onClose={() => setOpenConfirm(false)}
+        onConfirm={() => setOpenConfirm(false)}
+        title="Confirm Action"
+        description="Are you sure you want to continue?"
+        confirmLabel="Confirm"
+        cancelLabel="Cancel"
         isLoading={false}
       />
     </div>

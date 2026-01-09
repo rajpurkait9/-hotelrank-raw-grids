@@ -25,7 +25,7 @@ export default function TableRows({
     <Table.Body>
       {data.map((row) => (
         <Table.Row
-          key={row.id}
+          key={row.__key || row.id}
           _hover={{
             bg: 'blue.50',
           }}
@@ -49,13 +49,13 @@ export default function TableRows({
                     {actions
                       .filter((action) =>
                         typeof action.visible === 'function'
-                          ? action.visible(row)
+                          ? action.visible(row.__raw)
                           : action.visible !== false,
                       )
                       .map((action) => (
                         <MenuItem
                           key={action.label}
-                          onClick={() => action.onClick(row)}
+                          onClick={() => action.onClick(row.__raw)}
                           colorScheme={action.colorScheme}
                           value={action.label}
                         >

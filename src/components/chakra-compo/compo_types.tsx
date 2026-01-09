@@ -77,6 +77,8 @@ export interface IMDSComboboxTypes<T> {
   loading?: boolean;
   error?: boolean;
   placeholder?: string;
+  helpText?: string;
+  errorMessage?: string;
 
   itemToString: (item: T) => string;
   itemToValue: (item: T) => string;
@@ -93,7 +95,6 @@ export interface IMDSComboboxTypes<T> {
   itemProps?: any;
 }
 
-
 export interface ConfirmDeleteDialogProps {
   open: boolean;
   onClose: () => void;
@@ -103,5 +104,23 @@ export interface ConfirmDeleteDialogProps {
   entityName: string; // e.g. "Mahavir Enterprises"
   confirmText?: string; // default: DELETE
   confirmLabel?: string; // button text
+  isLoading?: boolean;
+}
+
+
+// compo_types.ts
+export interface ConfirmActionDialogProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+
+  title?: string;
+  description?: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+
+  icon?: React.ReactNode;
+  confirmButtonColorScheme?: string;
+
   isLoading?: boolean;
 }

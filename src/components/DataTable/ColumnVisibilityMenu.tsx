@@ -2,7 +2,7 @@
 
 import { Checkbox, IconButton, Menu, Portal } from '@chakra-ui/react';
 import { useStore } from '@tanstack/react-store';
-import { Columns, Columns2, Tally4, Tally5 } from 'lucide-react';
+import { Columns2 } from 'lucide-react';
 import { withChildren } from '../../utils/chakra-slot';
 import { tableStore } from './tableStore';
 

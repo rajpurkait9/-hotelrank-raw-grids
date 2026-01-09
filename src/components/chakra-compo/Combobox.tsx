@@ -1,4 +1,4 @@
-import { Combobox, HStack, Span, Spinner, useListCollection } from '@chakra-ui/react';
+import { Combobox, HStack, Span, Spinner, Text, useListCollection } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import { withChildren } from '../../utils/chakra-slot';
 import type { IMDSComboboxTypes } from './compo_types';
@@ -26,7 +26,9 @@ export default function MDSCombobox<T>({
 
   loading,
   error,
+  errorMessage,
   placeholder,
+  helpText,
 
   onInputChange,
   onSelect,
@@ -81,7 +83,7 @@ export default function MDSCombobox<T>({
       positioning={{ sameWidth: false, placement: 'bottom-start' }}
       {...rootProps}
     >
-      {label && <ComboboxLabel>{label}</ComboboxLabel>}
+      {label && <Text fontSize="sm">{label}</Text>}
 
       <ComboboxControl {...controlProps}>
         <ComboboxInput placeholder={placeholder ?? 'Type to search'} {...inputProps} />
@@ -99,9 +101,9 @@ export default function MDSCombobox<T>({
               <Span>Loading...</Span>
             </HStack>
           ) : error ? (
-            <Span p="2" color="fg.error">
-              Error fetching
-            </Span>
+            <Text p="2" color="red.500" fontSize="sm">
+              {errorMessage || 'Something went wrong'}
+            </Text>
           ) : (
             collection.items.map((item) => (
               <Combobox.Item key={itemToValue(item)} item={item} {...itemProps}>
@@ -109,6 +111,12 @@ export default function MDSCombobox<T>({
                 <Combobox.ItemIndicator />
               </Combobox.Item>
             ))
+          )}
+
+          {helpText && !error && !loading && (
+            <Text p="2" color="fg.muted" fontSize="sm">
+              {helpText}
+            </Text>
           )}
         </ComboboxContent>
       </ComboboxPositioner>

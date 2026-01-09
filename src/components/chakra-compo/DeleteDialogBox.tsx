@@ -92,7 +92,7 @@ function MDSConfirmDeleteDialog({
               </Button>
               <Button
                 size="sm"
-                // disabled={!isValid}
+                disabled={!isValid}
                 style={{
                   backgroundColor: '#FF0000',
                 }}
