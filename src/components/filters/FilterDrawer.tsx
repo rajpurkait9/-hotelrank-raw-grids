@@ -79,6 +79,7 @@ export const renderFilter = (filter: IFilterConfig, drawerOpen?: boolean) => {
           onChange={filter.onChange}
           options={filter.options ?? []}
           visible={drawerOpen}
+          placeholder={filter.placeholder}
         />
       );
 

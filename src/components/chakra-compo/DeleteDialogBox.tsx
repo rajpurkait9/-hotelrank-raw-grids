@@ -31,7 +31,14 @@ function MDSConfirmDeleteDialog({
   const isValid = value === confirmText;
 
   return (
-    <DialogRoot open={open} placement="center" onOpenChange={(e) => !e.open && onClose()}>
+    <DialogRoot
+      open={open}
+      placement="center"
+      onOpenChange={(e) => {
+        !e.open && onClose();
+        setValue('');
+      }}
+    >
       <Portal>
         <DialogBackdrop />
         <DialogPositioner>
@@ -87,7 +94,14 @@ function MDSConfirmDeleteDialog({
               borderTop="1px solid"
               borderColor="#d3d3d3"
             >
-              <Button variant="outline" size="sm" onClick={onClose}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  onClose();
+                  setValue('');
+                }}
+              >
                 Cancel
               </Button>
               <Button
