@@ -133,7 +133,9 @@ export default function DataTable<T extends Record<string, unknown>>({
                   </Table.Row>
                 </Table.Body>
               ) : (
-                <TableRows data={processedData} actions={actions} />
+                <TableRows data={processedData} actions={actions}
+                actionConfig={actionConfig}
+                />
               )}
             </Table.Root>
           </Box>
