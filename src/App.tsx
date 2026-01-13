@@ -1,13 +1,13 @@
 import { Spinner, Text } from '@chakra-ui/react';
 import { Trash, View } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import MDSConfirmActionDialog from './components/chakra-compo/ConfirmDialogBox';
 import MDSConfirmDeleteDialog from './components/chakra-compo/DeleteDialogBox';
 import { DataTable } from './components/DataTable';
 import { IFilterConfig } from './components/filters';
 import { FiltersToolBar } from './components/filters/Filters';
 import { loadOrder, saveOrder } from './components/filters/reorderStore';
 import { dummyData } from './dummy/data';
-import MDSConfirmActionDialog from './components/chakra-compo/ConfirmDialogBox';
 
 const headers = [
   { id: 'id', label: 'ID' },
@@ -41,6 +41,21 @@ function App() {
       onChange: (v: string | number | boolean | undefined) => updateFilterValue('select', v),
       size: 1.5,
       type: 'select',
+      options: [
+        { label: 'Option 1', value: '1' },
+        { label: 'Option 2', value: '2' },
+        { label: 'Option 3', value: '3' },
+      ],
+    },
+
+    {
+      id: 'combobox',
+      visible: true,
+      label: 'Combobox',
+      value: '',
+      onChange: (v: string | number | boolean | undefined) => updateFilterValue('select', v),
+      size: 1.5,
+      type: 'combobox',
       options: [
         { label: 'Option 1', value: '1' },
         { label: 'Option 2', value: '2' },
@@ -165,6 +180,7 @@ function App() {
         headers={headers}
         key={'something'}
         pageSizeOptions={[5, 8, 10]}
+        onRowSelect={(row) => console.log(row)}
         actions={[
           {
             icon: <View size={14} />,

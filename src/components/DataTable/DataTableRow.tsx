@@ -16,10 +16,12 @@ export default function TableRows({
   data = [] as Array<Record<string, any>>,
   actions = [],
   actionConfig,
+  onRowSelect,
 }: {
   data: Array<Record<string, any>>;
   actions?: DataTableAction<any>[];
   actionConfig?: ActionHeaderProps;
+  onRowSelect?: (row: any) => void;
 }) {
   const { columnOrder, visibility } = useStore(tableStore);
 
@@ -28,6 +30,7 @@ export default function TableRows({
       {data.map((row) => (
         <Table.Row
           key={row.__key || row.id}
+          onClick={() => onRowSelect?.(row.__raw)}
           _hover={{
             bg: 'blue.50',
           }}

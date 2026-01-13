@@ -31,6 +31,7 @@ export default function DataTable<T extends Record<string, unknown>>({
   paginationMode = 'client',
   actionConfig,
   pageSizeOptions,
+  onRowSelect,
 }: DataTableProps<T>) {
   useEffect(() => {
     setTableId(tableId);
@@ -135,6 +136,7 @@ export default function DataTable<T extends Record<string, unknown>>({
               ) : (
                 <TableRows data={processedData} actions={actions}
                 actionConfig={actionConfig}
+                onRowSelect={onRowSelect}
                 />
               )}
             </Table.Root>

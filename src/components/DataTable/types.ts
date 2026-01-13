@@ -1,15 +1,14 @@
-import { JSX } from 'react';
+import React, { JSX } from 'react';
 
 export type DensityType = 'sm' | 'md' | 'lg';
 export type SortOrder = 'asc' | 'desc';
 
-export interface Column<T = unknown> {
+export interface Column {
   id: string;
-  label: string;
+  label: string | React.ReactNode;
   minWidth?: number | string;
   align?: 'left' | 'center' | 'right';
   sortable?: boolean;
-  format?: (value: unknown, row: T) => React.ReactNode;
   backgroundColor?: string;
 }
 
@@ -42,7 +41,7 @@ export type ActionHeaderProps = {
 
 export interface DataTableProps<T = unknown> {
   tableId: string;
-  headers?: Column<T>[];
+  headers?: Column[];
   data?: T[];
   loading?: boolean;
   emptyMessage?: string;
@@ -58,4 +57,5 @@ export interface DataTableProps<T = unknown> {
   loadingChildren?: JSX.Element;
   skeletonLoading?: boolean;
   pageSizeOptions?: number[];
+  onRowSelect?: (row: T) => void;
 }

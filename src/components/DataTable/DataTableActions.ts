@@ -4,7 +4,7 @@ import { Column } from './types';
 export const getColumnOrderKey = (tableId: string) => `table_column_order_v1:${tableId}`;
 export const getColumnVisibilityKey = (tableId: string) => `table_column_visibility_v1:${tableId}`;
 
-export const setColumnOrder = (order: Column<any>[]) => {
+export const setColumnOrder = (order: Column[]) => {
   const { tableId } = tableStore.state;
   localStorage.setItem(getColumnOrderKey(tableId), JSON.stringify(order.map((c) => c.id)));
 
@@ -80,7 +80,7 @@ export const resetColumnVisibility = () => {
 };
 
 interface GetVisibleOrderedColumnsArgs {
-  columnOrder: Column<any>[];
+  columnOrder: Column[];
   sortableColumns: {
     id: string;
     label: string;

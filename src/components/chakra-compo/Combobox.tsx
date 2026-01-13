@@ -32,6 +32,7 @@ export default function MDSCombobox<T>({
 
   onInputChange,
   onSelect,
+  visible = true,
 
   // 🔑 SLOT PROPS
   rootProps,
@@ -90,7 +91,7 @@ export default function MDSCombobox<T>({
       positioning={{ sameWidth: false, placement: 'bottom-start' }}
       {...rootProps}
     >
-      {label && <Text fontSize="sm">{label}</Text>}
+      {visible && label && <Text fontSize="sm">{label}</Text>}
 
       <ComboboxControl {...controlProps}>
         <ComboboxInput placeholder={placeholder ?? 'Type to search'} {...inputProps} />

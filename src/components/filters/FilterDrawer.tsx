@@ -18,6 +18,7 @@ import { useStore } from '@tanstack/react-store';
 import { Bookmark, Delete, Edit2, Filter, Settings } from 'lucide-react';
 import { withChildren } from '../../utils/chakra-slot';
 import MDSCheckbox from '../chakra-compo/CheckBox';
+import MDSCombobox from '../chakra-compo/Combobox';
 import DateRangeFilter from '../chakra-compo/DateRangeSelector';
 import MDSInput from '../chakra-compo/Input';
 import MDSSelectBox from '../chakra-compo/SelectBox';
@@ -88,6 +89,19 @@ export const renderFilter = (filter: IFilterConfig, drawerOpen?: boolean) => {
         <DateRangeFilter
           value={filter.value as string}
           onChange={filter.onChange as (v: string | undefined) => void}
+        />
+      );
+
+    case 'combobox':
+      return (
+        <MDSCombobox
+          visible={drawerOpen}
+          label={filter.label}
+          // value={filter.value }
+          items={filter.options}
+          itemToString={(i) => i.label}
+          itemToValue={(i) => i.value}
+          renderItem={(item) => <span>{item.label}</span>}
         />
       );
 

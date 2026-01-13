@@ -28,3 +28,11 @@ export { default as StackedDateTime } from './components/chakra-compo/StackedDat
 
 export * from './components/chakra-compo/compo_types';
 export * from './utils/dateTime';
+
+// this is the react hooks exports
+export * from './components/customHooks/Options';
+
+export { default as usePagination } from './components/customHooks/Pagination.hook';
+export type { UsePaginationOptions } from './components/customHooks/Pagination.hook';
+export { default as useDebouncedSearch } from './components/customHooks/useDeboucedSearch.hook';
+export type { UseDebouncedSearchOptions } from './components/customHooks/useDeboucedSearch.hook';

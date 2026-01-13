@@ -94,6 +94,9 @@ export interface IMDSComboboxTypes<T> {
   controlProps?: any;
   contentProps?: any;
   itemProps?: any;
+
+
+  visible?: boolean;
 }
 
 export interface ConfirmDeleteDialogProps {

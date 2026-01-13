@@ -1,4 +1,5 @@
 import { Store } from '@tanstack/store';
+import React from 'react';
 import { getColumnOrderKey, getColumnVisibilityKey } from './DataTableActions';
 import { ActionHeaderProps, Column } from './types';
 
@@ -7,11 +8,11 @@ interface TableState {
   sortColumn: string | null;
   sortDirection: 'asc' | 'desc';
   visibility: Record<string, boolean>;
-  columnOrder: Column<any>[]; // ← FIXED
+  columnOrder: Column[];
   data: any[];
   sortableColumns: {
     id: string;
-    label: string;
+    label: string | React.ReactNode;
     sortable: boolean;
     backgroundColor?: string;
   }[];
@@ -25,7 +26,7 @@ export const tableStore = new Store<TableState>({
   visibility: {},
   columnOrder: [],
   data: [],
-  sortableColumns: [], // ← FIXED
+  sortableColumns: [],
   actionsConfig: {
     showActionColumn: true,
     showColumnVisibilityMenu: true,
@@ -34,7 +35,7 @@ export const tableStore = new Store<TableState>({
   },
 });
 
-export function setData(newData: any[], headers?: Column<any>[]) {
+export function setData(newData: any[], headers?: Column[]) {
   const firstRow = newData[0] ?? {};
 
   const dynamicColumns =
@@ -52,10 +53,10 @@ export function setData(newData: any[], headers?: Column<any>[]) {
     localStorage.getItem(getColumnOrderKey(tableId)) || '[]',
   );
 
-  const orderedColumns: Column<any>[] = [
+  const orderedColumns: Column[] = [
     ...savedOrderIds.map((id) => validColumns.find((c) => c.id === id)).filter(Boolean),
     ...validColumns.filter((col) => !savedOrderIds.includes(col.id)),
-  ] as Column<any>[];
+  ] as Column[];
 
   const savedVisibility: Record<string, boolean> = JSON.parse(
     localStorage.getItem(getColumnVisibilityKey(tableId)) || '{}',
