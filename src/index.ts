@@ -18,6 +18,13 @@ export { default as MDSCheckbox } from './components/chakra-compo/CheckBox';
 export { default as MDSCombobox } from './components/chakra-compo/Combobox';
 export { default as MDSConfirmActionDialog } from './components/chakra-compo/ConfirmDialogBox';
 export { default as MDSConfirmDeleteDialog } from './components/chakra-compo/DeleteDialogBox';
+export {
+  MDSDialogAction,
+  MDSDialogActions,
+  MDSDialogBody,
+  default as MDSDialogWrapper,
+} from './components/chakra-compo/DialogWrapper';
+export type { MDSDialogWrapperProps } from './components/chakra-compo/DialogWrapper';
 export { default as MDSInput } from './components/chakra-compo/Input';
 export {
   default as MDSRefreshButton,

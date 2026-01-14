@@ -95,7 +95,7 @@ export const renderFilter = (filter: IFilterConfig, drawerOpen?: boolean) => {
     case 'combobox':
       return (
         <MDSCombobox
-          visible={drawerOpen}
+          visible={true}
           label={filter.label}
           // value={filter.value }
           items={filter.options}

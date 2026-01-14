@@ -5,7 +5,7 @@ import MDSConfirmActionDialog from './components/chakra-compo/ConfirmDialogBox';
 import MDSConfirmDeleteDialog from './components/chakra-compo/DeleteDialogBox';
 import { DataTable } from './components/DataTable';
 import { IFilterConfig } from './components/filters';
-import { FiltersToolBar } from './components/filters/Filters';
+import FiltersToolBar from './components/filters/Filters';
 import { loadOrder, saveOrder } from './components/filters/reorderStore';
 import { dummyData } from './dummy/data';
 
@@ -25,10 +25,32 @@ function App() {
 
   const [filters, setFilters] = useState<IFilterConfig[]>([
     {
+      id: 'search input',
+      visible: true,
+      label: 'Search',
+      // value: '',
+      value: '',
+      onChange: (v: string | number | boolean | undefined) => {
+        // onSearchChange(v as string);
+        updateFilterValue('search input', v);
+      },
+      size: 2.5,
+      type: 'text',
+    },
+    {
+      id: 'checkbox',
+      visible: false,
+      label: 'Checkbox',
+      value: '',
+      onChange: (v: boolean | undefined | number | string) => updateFilterValue('checkbox', v),
+      size: 1,
+      type: 'checkbox',
+    },
+    {
       id: 'DateRange',
       visible: true,
       label: 'Date Range',
-      value: undefined,
+      value: '',
       onChange: (v: string | number | boolean | undefined) => updateFilterValue('DateRange', v),
       size: 2.5,
       type: 'date',
@@ -42,46 +64,10 @@ function App() {
       size: 1.5,
       type: 'select',
       options: [
-        { label: 'Option 1', value: '1' },
-        { label: 'Option 2', value: '2' },
-        { label: 'Option 3', value: '3' },
+        { label: 'Option 1', value: 'option1' },
+        { label: 'Option 2', value: 'option2' },
+        { label: 'Option 3', value: 'option3' },
       ],
-    },
-
-    {
-      id: 'combobox',
-      visible: true,
-      label: 'Combobox',
-      value: '',
-      onChange: (v: string | number | boolean | undefined) => updateFilterValue('select', v),
-      size: 1.5,
-      type: 'combobox',
-      options: [
-        { label: 'Option 1', value: '1' },
-        { label: 'Option 2', value: '2' },
-        { label: 'Option 3', value: '3' },
-      ],
-    },
-
-    {
-      id: 'checkbox-2',
-      // customComponent: <DemoCheckbox />,
-      visible: true,
-      label: 'Checkbox',
-      value: '',
-      onChange: (v: boolean | undefined | number | string) => updateFilterValue('checkbox', v),
-      size: 1.5,
-      type: 'checkbox',
-    },
-
-    {
-      id: 'search input',
-      visible: true,
-      label: 'Search',
-      value: '',
-      onChange: (v: string | number | boolean | undefined) => updateFilterValue('search input', v),
-      size: 1.5,
-      type: 'text',
     },
   ]);
 
@@ -94,7 +80,6 @@ function App() {
   }
 
   function handleSize(id: string, size: number) {
-    console.log({ id, size });
     type UpdatedFilter = IFilterConfig & { size: number };
 
     setFilters((prev: IFilterConfig[]) =>
@@ -139,26 +124,30 @@ function App() {
       }}
     >
       <FiltersToolBar
-        title={<Text color={'red'}>Filters</Text>}
+        title={
+          <Text>
+            <b>District Price History</b>
+          </Text>
+        }
         filters={filters}
         onVisibilityChange={handleVisibility}
         onReorder={(reordered) => {
           saveOrder(
-            'demo',
+            'district-price-history-filter',
             reordered.map((f) => f.id),
           );
           setFilters(reordered);
         }}
         onSizeChange={handleSize}
+        pageKey="district-price-history-filter"
+        // not in use
         onClear={handleClear}
         maxToolbarUnits={5}
-        pageKey="demo"
         currentFilters={activeFilterState}
         onLoadPreset={(filters, name) => {
-          setFilters(filters);
-          setActivePresetName(name ?? null);
+          console.log('Loaded preset:', name, filters);
         }}
-        activePresetName={activePresetName}
+        activePresetName={null}
       />
 
       <DataTable
