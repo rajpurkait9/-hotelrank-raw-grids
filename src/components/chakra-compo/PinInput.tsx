@@ -23,7 +23,6 @@ const MDSPinInput = ({
   required = false,
   visible = true,
 }: IMDSPinInputTypes) => {
-  // Convert string → string[]
   const valueArray = Array.from({ length }).map((_, i) => value?.[i] ?? '');
 
   return (

@@ -14,6 +14,7 @@ export interface IMDSInputTypes {
   required?: boolean;
   errorText?: string;
   visible?: boolean;
+  type?: string;
 }
 
 export interface IMDSSelectBoxTypes {
@@ -95,7 +96,6 @@ export interface IMDSComboboxTypes<T> {
   contentProps?: any;
   itemProps?: any;
 
-
   visible?: boolean;
 }
 
@@ -127,7 +127,6 @@ export interface ConfirmActionDialogProps {
 
   isLoading?: boolean;
 }
-
 
 export interface IMDSPinInputTypes {
   value: string;

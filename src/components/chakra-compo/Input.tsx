@@ -21,6 +21,7 @@ const MDSInput = ({
   required = false,
   errorText,
   visible,
+  type = 'text',
 }: IMDSInputTypes) => {
   return (
     <FieldRoot width={width}>
@@ -31,6 +32,7 @@ const MDSInput = ({
           onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
           size={size}
+          type={type}
           variant={variant}
           disabled={isDisabled}
           required={required}
