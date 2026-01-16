@@ -26,6 +26,7 @@ export {
 } from './components/chakra-compo/DialogWrapper';
 export type { MDSDialogWrapperProps } from './components/chakra-compo/DialogWrapper';
 export { default as MDSInput } from './components/chakra-compo/Input';
+export { default as MDSPinInput } from './components/chakra-compo/PinInput';
 export {
   default as MDSRefreshButton,
   default as RefreshButton,

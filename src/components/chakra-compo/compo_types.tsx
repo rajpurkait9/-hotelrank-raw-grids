@@ -127,3 +127,19 @@ export interface ConfirmActionDialogProps {
 
   isLoading?: boolean;
 }
+
+
+export interface IMDSPinInputTypes {
+  value: string;
+  onChange?: (value: string) => void;
+
+  length?: number;
+  size?: 'xs' | 'sm' | 'md' | 'lg';
+  isDisabled?: boolean;
+
+  label?: string;
+  helperText?: string;
+  errorText?: string;
+  required?: boolean;
+  visible?: boolean;
+}
