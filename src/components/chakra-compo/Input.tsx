@@ -22,6 +22,9 @@ const MDSInput = ({
   errorText,
   visible,
   type = 'text',
+  min = 0,
+  max = 100,
+  step = 1,
 }: IMDSInputTypes) => {
   return (
     <FieldRoot width={width}>
@@ -36,6 +39,9 @@ const MDSInput = ({
           variant={variant}
           disabled={isDisabled}
           required={required}
+          min={min}
+          max={max}
+          step={step}
         />
       </InputGroup>
 

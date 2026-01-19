@@ -15,6 +15,11 @@ export interface IMDSInputTypes {
   errorText?: string;
   visible?: boolean;
   type?: string;
+
+  // only for type number
+  min?: number;
+  max?: number;
+  step?: number;
 }
 
 export interface IMDSSelectBoxTypes {
