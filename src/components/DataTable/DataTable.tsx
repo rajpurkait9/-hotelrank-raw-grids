@@ -28,7 +28,6 @@ export default function DataTable<T extends Record<string, unknown>>({
   onPageSizeChange,
   density = 'sm',
   totalCount = 0,
-  paginationMode = 'client',
   actionConfig,
   pageSizeOptions,
   onRowSelect,
@@ -61,13 +60,17 @@ export default function DataTable<T extends Record<string, unknown>>({
       );
     }
 
-    if (paginationMode === 'client') {
-      const start = (safePage - 1) * pageSize;
-      return data.slice(start, start + pageSize);
-    }
 
     return data;
-  }, [newData, sortColumn, sortDirection, page, pageSize, paginationMode]);
+  }, [newData, sortColumn, sortDirection, page, pageSize]);
+
+  // const startIndex = (page - 1) * pageSize;
+  const startIndex= useMemo(() => {
+    const safePage = Math.max(1, page || 1);
+    return (safePage - 1) * pageSize;
+  }, [page, pageSize]);
+
+
 
   useEffect(() => {
     if (page < 1 && onPageChange) {
@@ -137,6 +140,7 @@ export default function DataTable<T extends Record<string, unknown>>({
                 <TableRows data={processedData} actions={actions}
                 actionConfig={actionConfig}
                 onRowSelect={onRowSelect}
+                startIndex={startIndex}
                 />
               )}
             </Table.Root>

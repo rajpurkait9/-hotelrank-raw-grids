@@ -18,6 +18,17 @@ export default function TableHeader() {
   return (
     <Table.Header background={'blue.200'} position="sticky" top={0} p="0" zIndex={1}>
       <Table.Row height={'28px'}>
+        {actionsConfig?.showSNo && (
+          <Table.ColumnHeader
+            width="60px"
+            textAlign="center"
+            backgroundColor={actionsConfig.backgroundColor}
+            borderRight="2px solid #dcdcdc"
+          >
+            {actionsConfig.indexChildren || 'S.No'}
+          </Table.ColumnHeader>
+        )}
+
         {visibleOrderedColumns.map((col) => {
           const isSorted = sortColumn === col?.id;
           return (
@@ -60,7 +71,7 @@ export default function TableHeader() {
             backgroundColor={actionsConfig.backgroundColor}
             borderRight="2px solid #dcdcdc"
           >
-            {actionsConfig.children}
+            {actionsConfig.children || 'Actions'}
           </Table.ColumnHeader>
         )}
         {actionsConfig?.showColumnVisibilityMenu && (

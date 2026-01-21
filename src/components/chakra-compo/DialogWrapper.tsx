@@ -52,18 +52,37 @@ export interface MDSDialogWrapperProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  width?: string;
+  position?: string;
 }
 
-const MDSDialogWrapper = ({ open, onClose, title, children }: MDSDialogWrapperProps) => {
+const MDSDialogWrapper = ({
+  open,
+  onClose,
+  title,
+  children,
+  width,
+  position,
+}: MDSDialogWrapperProps) => {
   const { body, actions } = extractSlots(children);
 
   return (
-    <DialogRoot open={open} onOpenChange={(e) => !e.open && onClose()}>
+    <DialogRoot
+      open={open}
+      onOpenChange={(e) => !e.open && onClose()}
+      placement={position ?? 'center'}
+    >
       <Portal>
         <DialogBackdrop bg="blackAlpha.400" />
 
         <DialogPositioner>
-          <DialogContent w="100%" maxW="520px" borderRadius="12px" overflow="hidden" boxShadow="lg">
+          <DialogContent
+            w={width ?? '560px'}
+            maxW={width ?? '560px'}
+            borderRadius="6px"
+            overflow="hidden"
+            boxShadow="lg"
+          >
             <DialogHeader
               px="20px"
               py="16px"
@@ -83,11 +102,7 @@ const MDSDialogWrapper = ({ open, onClose, title, children }: MDSDialogWrapperPr
             </DialogHeader>
 
             {body && (
-              <DialogBody
-                px="20px"
-                py="16px"
-                bg="#F8FAFC"
-              >
+              <DialogBody px="20px" py="16px" bg="#F8FAFC" type="submit">
                 <Flex direction="column" gap="16px">
                   {body}
                 </Flex>

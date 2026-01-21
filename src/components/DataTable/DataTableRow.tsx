@@ -17,17 +17,19 @@ export default function TableRows({
   actions = [],
   actionConfig,
   onRowSelect,
+  startIndex = 0,
 }: {
   data: Array<Record<string, any>>;
   actions?: DataTableAction<any>[];
   actionConfig?: ActionHeaderProps;
   onRowSelect?: (row: any) => void;
+  startIndex?: number;
 }) {
   const { columnOrder, visibility } = useStore(tableStore);
 
   return (
     <Table.Body>
-      {data.map((row) => (
+      {data.map((row, index) => (
         <Table.Row
           key={row.__key || row.id}
           onClick={() => onRowSelect?.(row.__raw)}
@@ -35,6 +37,11 @@ export default function TableRows({
             bg: 'blue.50',
           }}
         >
+          {actionConfig?.showSNo && (
+            <Table.Cell textAlign="center" fontWeight="medium">
+              {startIndex + index + 1}
+            </Table.Cell>
+          )}
           {columnOrder
             .filter((id) => visibility[id.id])
             .map((id) => (

@@ -37,6 +37,9 @@ export type ActionHeaderProps = {
   width?: string;
   showColumnVisibilityMenu?: boolean;
   backgroundColorColumnVisibilityMenu?: string;
+
+  showSNo?: boolean;
+  indexChildren?: React.ReactNode;
 };
 
 export interface DataTableProps<T = unknown> {
@@ -52,7 +55,6 @@ export interface DataTableProps<T = unknown> {
   onPageSizeChange?: (size: number) => void | undefined;
   density?: DensityType;
   totalCount?: number;
-  paginationMode?: 'server' | 'client';
   actionConfig?: ActionHeaderProps;
   loadingChildren?: JSX.Element;
   skeletonLoading?: boolean;
