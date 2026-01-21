@@ -60,4 +60,5 @@ export interface DataTableProps<T = unknown> {
   skeletonLoading?: boolean;
   pageSizeOptions?: number[];
   onRowSelect?: (row: T) => void;
+  onRowSelectEvent?: 'left' | 'right';
 }

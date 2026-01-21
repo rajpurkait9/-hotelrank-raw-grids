@@ -89,6 +89,9 @@ export default function TablePagination({
               </SelectPositioner>
             </Portal>
           </Select.Root>
+          <Text fontSize="sm" color="gray.600" _dark={{ color: 'gray.400' }}>
+            of {totalCount}
+          </Text>
         </HStack>
 
         {/* PAGINATION */}

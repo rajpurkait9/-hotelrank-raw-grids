@@ -96,10 +96,13 @@ function App() {
     );
   }
 
-  const activeFilterState = filters.reduce((obj, f) => {
-    obj[f.id] = f.value;
-    return obj;
-  }, {} as Record<string, any>);
+  const activeFilterState = filters.reduce(
+    (obj, f) => {
+      obj[f.id] = f.value;
+      return obj;
+    },
+    {} as Record<string, any>,
+  );
 
   useEffect(() => {
     const order = loadOrder('demo');
@@ -169,7 +172,8 @@ function App() {
         headers={headers}
         key={'something'}
         pageSizeOptions={[5, 8, 10]}
-        onRowSelect={(row) => console.log(row)}
+        onRowSelect={(row) => console.log('click')}
+        onRowSelectEvent="left"
         actions={[
           {
             icon: <View size={14} />,

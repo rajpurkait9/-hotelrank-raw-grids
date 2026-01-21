@@ -2,6 +2,7 @@
 
 import { Button, CloseButton, Dialog, Flex, Portal } from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
+import { MDSRefreshButton } from '../..';
 import { withChildren } from '../../utils/chakra-slot';
 
 /* ───────── Slot Components ───────── */
@@ -54,6 +55,8 @@ export interface MDSDialogWrapperProps {
   children: ReactNode;
   width?: string;
   position?: string;
+  refetch?: () => Promise<any>;
+  loading?: boolean;
 }
 
 const MDSDialogWrapper = ({
@@ -63,6 +66,8 @@ const MDSDialogWrapper = ({
   children,
   width,
   position,
+  refetch,
+  loading = false,
 }: MDSDialogWrapperProps) => {
   const { body, actions } = extractSlots(children);
 
@@ -98,6 +103,9 @@ const MDSDialogWrapper = ({
                 <DialogCloseTrigger asChild>
                   <CloseButton size="sm" />
                 </DialogCloseTrigger>
+                {refetch && (
+                  <MDSRefreshButton label="Refresh" refetch={refetch} isLoading={loading} />
+                )}
               </Flex>
             </DialogHeader>
 

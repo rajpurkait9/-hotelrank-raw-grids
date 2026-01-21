@@ -17,12 +17,14 @@ export default function TableRows({
   actions = [],
   actionConfig,
   onRowSelect,
+  onRowSelectEvent = 'left',
   startIndex = 0,
 }: {
   data: Array<Record<string, any>>;
   actions?: DataTableAction<any>[];
   actionConfig?: ActionHeaderProps;
   onRowSelect?: (row: any) => void;
+  onRowSelectEvent?: 'left' | 'right';
   startIndex?: number;
 }) {
   const { columnOrder, visibility } = useStore(tableStore);
@@ -32,10 +34,18 @@ export default function TableRows({
       {data.map((row, index) => (
         <Table.Row
           key={row.__key || row.id}
-          onClick={() => onRowSelect?.(row.__raw)}
+          onClick={() => onRowSelectEvent === 'left' && onRowSelect?.(row.__raw)}
           _hover={{
             bg: 'blue.50',
           }}
+          onContextMenu={
+            onRowSelectEvent === 'right'
+              ? (e) => {
+                  e.preventDefault();
+                  onRowSelect?.(row.__raw);
+                }
+              : undefined
+          }
         >
           {actionConfig?.showSNo && (
             <Table.Cell textAlign="center" fontWeight="medium">

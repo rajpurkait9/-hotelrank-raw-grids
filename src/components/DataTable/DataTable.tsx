@@ -31,6 +31,7 @@ export default function DataTable<T extends Record<string, unknown>>({
   actionConfig,
   pageSizeOptions,
   onRowSelect,
+  onRowSelectEvent = 'left',
 }: DataTableProps<T>) {
   useEffect(() => {
     setTableId(tableId);
@@ -60,17 +61,14 @@ export default function DataTable<T extends Record<string, unknown>>({
       );
     }
 
-
     return data;
   }, [newData, sortColumn, sortDirection, page, pageSize]);
 
   // const startIndex = (page - 1) * pageSize;
-  const startIndex= useMemo(() => {
+  const startIndex = useMemo(() => {
     const safePage = Math.max(1, page || 1);
     return (safePage - 1) * pageSize;
   }, [page, pageSize]);
-
-
 
   useEffect(() => {
     if (page < 1 && onPageChange) {
@@ -137,10 +135,13 @@ export default function DataTable<T extends Record<string, unknown>>({
                   </Table.Row>
                 </Table.Body>
               ) : (
-                <TableRows data={processedData} actions={actions}
-                actionConfig={actionConfig}
-                onRowSelect={onRowSelect}
-                startIndex={startIndex}
+                <TableRows
+                  data={processedData}
+                  actions={actions}
+                  actionConfig={actionConfig}
+                  onRowSelect={onRowSelect}
+                  startIndex={startIndex}
+                  onRowSelectEvent={onRowSelectEvent}
                 />
               )}
             </Table.Root>
