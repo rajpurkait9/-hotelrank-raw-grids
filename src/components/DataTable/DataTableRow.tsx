@@ -3,6 +3,7 @@
 import { IconButton, Menu, Portal, Table } from '@chakra-ui/react';
 import { useStore } from '@tanstack/react-store';
 import { MoreHorizontal } from 'lucide-react';
+import React from 'react';
 import { withChildren } from '../../utils/chakra-slot';
 import { tableStore } from './tableStore';
 import { ActionHeaderProps, DataTableAction } from './types';
@@ -23,11 +24,11 @@ export default function TableRows({
   data: Array<Record<string, any>>;
   actions?: DataTableAction<any>[];
   actionConfig?: ActionHeaderProps;
-  onRowSelect?: (row: any) => void;
+  onRowSelect?: (row: any, event?: React.MouseEvent) => void;
   onRowSelectEvent?: 'left' | 'right';
   startIndex?: number;
 }) {
-  const { columnOrder, visibility } = useStore(tableStore);
+  const { columnOrder, visibility, columnWidths } = useStore(tableStore);
 
   return (
     <Table.Body>
@@ -42,7 +43,7 @@ export default function TableRows({
             onRowSelectEvent === 'right'
               ? (e) => {
                   e.preventDefault();
-                  onRowSelect?.(row.__raw);
+                  onRowSelect?.(row.__raw, e);
                 }
               : undefined
           }
@@ -55,7 +56,12 @@ export default function TableRows({
           {columnOrder
             .filter((id) => visibility[id.id])
             .map((id) => (
-              <Table.Cell key={id.id}>{row[id.id]}</Table.Cell>
+              <Table.Cell
+                w={columnWidths[id.id] ? columnWidths[id.id] + 'px' : undefined}
+                key={id.id}
+              >
+                {row[id.id]}
+              </Table.Cell>
             ))}
 
           {actionConfig?.showActionColumn && (

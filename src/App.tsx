@@ -174,6 +174,11 @@ function App() {
         pageSizeOptions={[5, 8, 10]}
         onRowSelect={(row) => console.log('click')}
         onRowSelectEvent="left"
+        actionConfig={{
+          showSNo: true,
+        }
+
+        }
         actions={[
           {
             icon: <View size={14} />,

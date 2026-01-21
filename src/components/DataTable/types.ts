@@ -59,6 +59,6 @@ export interface DataTableProps<T = unknown> {
   loadingChildren?: JSX.Element;
   skeletonLoading?: boolean;
   pageSizeOptions?: number[];
-  onRowSelect?: (row: T) => void;
+  onRowSelect?: (row: T, event?: React.MouseEvent) => void;
   onRowSelectEvent?: 'left' | 'right';
 }

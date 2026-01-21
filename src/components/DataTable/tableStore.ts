@@ -8,6 +8,7 @@ interface TableState {
   sortColumn: string | null;
   sortDirection: 'asc' | 'desc';
   visibility: Record<string, boolean>;
+  columnWidths: Record<string, number>;
   columnOrder: Column[];
   data: any[];
   sortableColumns: {
@@ -25,6 +26,7 @@ export const tableStore = new Store<TableState>({
   sortDirection: 'asc',
   visibility: {},
   columnOrder: [],
+  columnWidths: {},
   data: [],
   sortableColumns: [],
   actionsConfig: {
@@ -34,6 +36,7 @@ export const tableStore = new Store<TableState>({
     width: '100px',
   },
 });
+export const getColumnWidthKey = (tableId: string) => `datatable:${tableId}:column-widths`;
 
 export function setData(newData: any[], headers?: Column[]) {
   const firstRow = newData[0] ?? {};
@@ -62,16 +65,24 @@ export function setData(newData: any[], headers?: Column[]) {
     localStorage.getItem(getColumnVisibilityKey(tableId)) || '{}',
   );
 
-  const mergedVisibility = orderedColumns.reduce((acc, col) => {
-    acc[col.id] = savedVisibility[col.id] ?? true;
-    return acc;
-  }, {} as Record<string, boolean>);
+  const mergedVisibility = orderedColumns.reduce(
+    (acc, col) => {
+      acc[col.id] = savedVisibility[col.id] ?? true;
+      return acc;
+    },
+    {} as Record<string, boolean>,
+  );
+
+  const savedWidths: Record<string, number> = JSON.parse(
+    localStorage.getItem(getColumnWidthKey(tableId)) || '{}',
+  );
 
   tableStore.setState((prev) => ({
     ...prev,
     data: newData,
     columnOrder: orderedColumns,
     visibility: mergedVisibility,
+    columnWidths: savedWidths,
     sortableColumns: orderedColumns.map((col) => ({
       id: col.id,
       label: col.label,
@@ -98,3 +109,16 @@ export const setActionsConfig = (actionsConfig: ActionHeaderProps) => {
     actionsConfig,
   }));
 };
+
+export function setColumnWidth(columnId: string, width: number) {
+  tableStore.setState((prev) => {
+    const updated = {
+      ...prev.columnWidths,
+      [columnId]: Math.max(60, width), // min width
+    };
+
+    localStorage.setItem(getColumnWidthKey(prev.tableId), JSON.stringify(updated));
+
+    return { ...prev, columnWidths: updated };
+  });
+}

@@ -1,4 +1,4 @@
-import { tableStore } from './tableStore';
+import { getColumnWidthKey, tableStore } from './tableStore';
 import { Column } from './types';
 
 export const getColumnOrderKey = (tableId: string) => `table_column_order_v1:${tableId}`;
@@ -99,4 +99,21 @@ export function getVisibleOrderedColumns({
     .map((orderCol) => sortableColumns.find((c) => c.id === orderCol.id))
     .filter((col): col is NonNullable<typeof col> => Boolean(col))
     .filter((col) => visibility[col.id]);
+}
+
+
+export function setColumnWidth(columnId: string, width: number) {
+  tableStore.setState((prev) => {
+    const updated = {
+      ...prev.columnWidths,
+      [columnId]: Math.max(60, width), // min width
+    };
+
+    localStorage.setItem(
+      getColumnWidthKey(prev.tableId),
+      JSON.stringify(updated),
+    );
+
+    return { ...prev, columnWidths: updated };
+  });
 }

@@ -20,7 +20,7 @@ export default function TableHeader() {
       <Table.Row height={'28px'}>
         {actionsConfig?.showSNo && (
           <Table.ColumnHeader
-            width="60px"
+            width="20px"
             textAlign="center"
             backgroundColor={actionsConfig.backgroundColor}
             borderRight="2px solid #dcdcdc"
@@ -36,7 +36,6 @@ export default function TableHeader() {
               key={col?.id}
               id={col?.id}
               onClick={() => col?.sortable && sortByColumn(col?.id)}
-              cursor={col?.sortable ? 'pointer' : 'default'}
               borderRight="2px solid #dcdcdc"
               backgroundColor={col?.backgroundColor}
             >
