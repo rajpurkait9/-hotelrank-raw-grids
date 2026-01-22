@@ -19,12 +19,13 @@ import { Bookmark, Delete, Edit2, Filter, Settings } from 'lucide-react';
 import { withChildren } from '../../utils/chakra-slot';
 import MDSCheckbox from '../chakra-compo/CheckBox';
 import MDSCombobox from '../chakra-compo/Combobox';
-import DateRangeFilter from '../chakra-compo/DateRangeSelector';
+import MDSDateSelector from '../chakra-compo/DateComponent/DateSelector';
 import MDSInput from '../chakra-compo/Input';
 import MDSSelectBox from '../chakra-compo/SelectBox';
 import { IFilterConfig, IFilterDrawerProps } from './FilterTypes';
 import { addPreset, deletePreset, getPresets, presetStore } from './presetStore';
 import SortableFilterItem from './SortableFilterItem';
+import MDSDatePicker from '../chakra-compo/DateComponent/DateSelector';
 
 const DrawerRoot = withChildren(Drawer.Root);
 const DrawerTrigger = withChildren(Drawer.Trigger);
@@ -86,7 +87,11 @@ export const renderFilter = (filter: IFilterConfig, drawerOpen?: boolean) => {
 
     case 'date':
       return (
-        <DateRangeFilter
+        // <DateRangeFilter
+        //   value={filter.value as string}
+        //   onChange={filter.onChange as (v: string | undefined) => void}
+        // />
+        <MDSDatePicker
           value={filter.value as string}
           onChange={filter.onChange as (v: string | undefined) => void}
         />
@@ -135,10 +140,13 @@ export const FiltersDrawer = ({
     const name = prompt('Preset name?');
     if (!name) return;
 
-    const values = filters.reduce((acc, f) => {
-      acc[f.id] = f.value;
-      return acc;
-    }, {} as Record<string, any>);
+    const values = filters.reduce(
+      (acc, f) => {
+        acc[f.id] = f.value;
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 
     addPreset(pageKey, {
       id: crypto.randomUUID(),

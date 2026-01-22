@@ -24,28 +24,28 @@ function App() {
   const [activePresetName, setActivePresetName] = useState<string | null>(null);
 
   const [filters, setFilters] = useState<IFilterConfig[]>([
-    {
-      id: 'search input',
-      visible: true,
-      label: 'Search',
-      // value: '',
-      value: '',
-      onChange: (v: string | number | boolean | undefined) => {
-        // onSearchChange(v as string);
-        updateFilterValue('search input', v);
-      },
-      size: 2.5,
-      type: 'text',
-    },
-    {
-      id: 'checkbox',
-      visible: false,
-      label: 'Checkbox',
-      value: '',
-      onChange: (v: boolean | undefined | number | string) => updateFilterValue('checkbox', v),
-      size: 1,
-      type: 'checkbox',
-    },
+    // {
+    //   id: 'search input',
+    //   visible: true,
+    //   label: 'Search',
+    //   // value: '',
+    //   value: '',
+    //   onChange: (v: string | number | boolean | undefined) => {
+    //     // onSearchChange(v as string);
+    //     updateFilterValue('search input', v);
+    //   },
+    //   size: 2.5,
+    //   type: 'text',
+    // },
+    // {
+    //   id: 'checkbox',
+    //   visible: false,
+    //   label: 'Checkbox',
+    //   value: '',
+    //   onChange: (v: boolean | undefined | number | string) => updateFilterValue('checkbox', v),
+    //   size: 1,
+    //   type: 'checkbox',
+    // },
     {
       id: 'DateRange',
       visible: true,
@@ -55,20 +55,20 @@ function App() {
       size: 2.5,
       type: 'date',
     },
-    {
-      id: 'select',
-      visible: true,
-      label: 'Select Box',
-      value: '',
-      onChange: (v: string | number | boolean | undefined) => updateFilterValue('select', v),
-      size: 1.5,
-      type: 'select',
-      options: [
-        { label: 'Option 1', value: 'option1' },
-        { label: 'Option 2', value: 'option2' },
-        { label: 'Option 3', value: 'option3' },
-      ],
-    },
+    // {
+    //   id: 'select',
+    //   visible: true,
+    //   label: 'Select Box',
+    //   value: '',
+    //   onChange: (v: string | number | boolean | undefined) => updateFilterValue('select', v),
+    //   size: 1.5,
+    //   type: 'select',
+    //   options: [
+    //     { label: 'Option 1', value: 'option1' },
+    //     { label: 'Option 2', value: 'option2' },
+    //     { label: 'Option 3', value: 'option3' },
+    //   ],
+    // },
   ]);
 
   function updateFilterValue(id: string, value: any) {

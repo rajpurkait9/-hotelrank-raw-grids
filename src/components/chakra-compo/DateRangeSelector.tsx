@@ -1,35 +1,50 @@
 'use client';
 
+import { DatePicker, DateValue } from '@ark-ui/react';
 import {
+  Box,
+  Button,
   HStack,
   IconButton,
   Input,
-  InputElement,
   InputGroup,
-  Kbd,
   Popover,
-  PopoverArrow,
   Portal,
   Text,
   VStack,
 } from '@chakra-ui/react';
-
-import { Calendar } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { withChildren } from '../../utils/chakra-slot';
 import {
   DATE_SEPARATOR,
   formatDatePart,
   formatForDisplay,
-  getTodayFormatted,
   getTodayISO,
   parsePartialDate,
 } from '../filters/shared/dateUtils';
 
+
+/* ---------------- Popover slots ---------------- */
 const PopoverRoot = withChildren(Popover.Root);
 const PopoverTrigger = withChildren(Popover.Trigger);
 const PopoverContent = withChildren(Popover.Content);
 const PopoverPositioner = withChildren(Popover.Positioner);
+
+/* ---------------- Helpers ---------------- */
+const toISO = (date: Date) => {
+  try {
+    return date.toISOString().slice(0, 10);
+  } catch {
+    return getTodayISO();
+  }
+};
+
+const fromISO = (iso?: string) => {
+  if (!iso) return undefined;
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d);
+};
 
 export default function DateRangeFilter({
   value,
@@ -40,8 +55,10 @@ export default function DateRangeFilter({
   onChange: (value?: string) => void;
   disabled?: boolean;
 }) {
+  // Parse initial value "YYYY-MM-DD|YYYY-MM-DD"
   const [startDate = '', endDate = ''] = value ? value.split('|') : [];
 
+  // 1. Local Input State
   const [input, setInput] = useState(() => {
     if (startDate && endDate) {
       return `${formatForDisplay(startDate)}${DATE_SEPARATOR}${formatForDisplay(endDate)}`;
@@ -50,39 +67,34 @@ export default function DateRangeFilter({
     return '';
   });
 
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Keyboard shortcut: Ctrl + D
+  // 2. Sync input text when prop `value` changes externally
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === 'd' && !e.shiftKey && !e.metaKey) {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  const handleChange = (rawInput: string) => {
-    let sanitized = rawInput;
-
-    if (sanitized.includes(DATE_SEPARATOR)) {
-      const [startPart, endPart = ''] = sanitized.split(DATE_SEPARATOR);
-      sanitized = `${formatDatePart(startPart.trim())}${DATE_SEPARATOR}${formatDatePart(
-        endPart.trim(),
-      )}`;
-    } else if (sanitized.toLowerCase().includes(' to ')) {
-      const [startPart, rest = ''] = sanitized.split(/\s+to\s+/i);
-      sanitized = `${formatDatePart(startPart.trim())} to ${formatDatePart(rest.trim())}`;
-    } else {
-      sanitized = formatDatePart(sanitized);
+    if (startDate && endDate) {
+      setInput(`${formatForDisplay(startDate)}${DATE_SEPARATOR}${formatForDisplay(endDate)}`);
+    } else if (!value) {
+      setInput('');
     }
+  }, [value, startDate, endDate]);
 
-    setInput(sanitized);
+  /* ---------------- Handlers ---------------- */
+
+  // Handle manual typing in the input
+  const handleChange = (raw: string) => {
+    let val = raw;
+    // Basic auto-formatting logic
+    if (val.includes(DATE_SEPARATOR)) {
+      const [s, e = ''] = val.split(DATE_SEPARATOR);
+      val = `${formatDatePart(s.trim())}${DATE_SEPARATOR}${formatDatePart(e.trim())}`;
+    } else {
+      val = formatDatePart(val);
+    }
+    setInput(val);
   };
 
+  // Commit changes on Blur
   const handleBlur = () => {
     const trimmed = input.trim();
     if (!trimmed) {
@@ -90,192 +102,244 @@ export default function DateRangeFilter({
       return;
     }
 
-    if (trimmed.includes(DATE_SEPARATOR)) {
-      const [startPart, endPart = ''] = trimmed.split(DATE_SEPARATOR).map((p) => p.trim());
-      const startParsed = parsePartialDate(startPart);
-      const endParsed = endPart ? parsePartialDate(endPart) : null;
+    const [s, e = ''] = trimmed.split(DATE_SEPARATOR).map((x) => x.trim());
+    const start = parsePartialDate(s);
+    const end = e ? parsePartialDate(e) : null;
 
-      if (startParsed && endParsed) {
-        const [finalStart, finalEnd] =
-          endParsed < startParsed ? [endParsed, startParsed] : [startParsed, endParsed];
-        const display = `${formatForDisplay(finalStart)}${DATE_SEPARATOR}${formatForDisplay(
-          finalEnd,
-        )}`;
-        setInput(display);
-        onChange(`${finalStart}|${finalEnd}`);
-      } else if (startParsed && !endPart) {
-        setInput(`${formatForDisplay(startParsed)}${DATE_SEPARATOR}`);
-        onChange(undefined); // incomplete range
-      } else if (startParsed && endPart) {
-        const todayISO = getTodayISO();
-        const [finalStart, finalEnd] =
-          todayISO < startParsed ? [todayISO, startParsed] : [startParsed, todayISO];
-        const display = `${formatForDisplay(finalStart)}${DATE_SEPARATOR}${formatForDisplay(
-          finalEnd,
-        )}`;
-        setInput(display);
-        onChange(`${finalStart}|${finalEnd}`);
-      } else {
-        setInput('');
-        onChange(undefined);
-      }
-    } else {
-      const parsed = parsePartialDate(trimmed);
-      if (parsed) {
-        setInput(`${formatForDisplay(parsed)}${DATE_SEPARATOR}`);
-        onChange(undefined);
-      } else {
-        setInput('');
-        onChange(undefined);
-      }
+    if (!start) {
+      // Invalid date, revert to empty or previous
+      setInput('');
+      onChange(undefined);
+      return;
     }
+
+    const finalStart = start;
+    const finalEnd = end ?? start; // If end is missing, assume single day range
+
+    // Sort so start is always before end
+    const [a, b] = finalEnd < finalStart ? [finalEnd, finalStart] : [finalStart, finalEnd];
+
+    // Update input display and trigger change
+    const nextInput = `${formatForDisplay(a)}${DATE_SEPARATOR}${formatForDisplay(b)}`;
+    if (input !== nextInput) setInput(nextInput);
+
+    onChange(`${a}|${b}`);
   };
 
+  // Commit changes on Enter key
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== 'Enter') return;
-    e.preventDefault();
-
-    const cursorPos = inputRef.current?.selectionStart || 0;
-    const separatorIndex = input.indexOf(DATE_SEPARATOR);
-
-    if (!input.trim()) {
-      setInput(`${getTodayFormatted()}${DATE_SEPARATOR}`);
-      return;
-    }
-
-    if (separatorIndex === -1) {
-      const parsed = parsePartialDate(input.trim());
-      if (parsed) {
-        setInput(`${formatForDisplay(parsed)}${DATE_SEPARATOR}`);
-      }
-      return;
-    }
-
-    // If cursor is in or before the separator, try to finalize start date
-    if (cursorPos <= separatorIndex + DATE_SEPARATOR.length) {
-      const startPart = input.substring(0, separatorIndex).trim();
-      const endPart = input.substring(separatorIndex + DATE_SEPARATOR.length);
-      const startParsed = parsePartialDate(startPart);
-      if (startParsed) {
-        setInput(`${formatForDisplay(startParsed)}${DATE_SEPARATOR}${endPart}`);
-      }
-      return;
-    }
-
-    // Cursor in end part
-    const endPart = input.substring(separatorIndex + DATE_SEPARATOR.length).trim();
-    if (!endPart) {
-      const newInput =
-        input.substring(0, separatorIndex + DATE_SEPARATOR.length) + getTodayFormatted();
-      setInput(newInput);
-      setTimeout(() => {
-        handleBlur();
-        inputRef.current?.blur();
-      }, 0);
-    } else {
+    if (e.key === 'Enter') {
       handleBlur();
+      setOpen(false);
       inputRef.current?.blur();
     }
   };
 
-  const handleClear = () => {
-    setInput('');
-    onChange(undefined);
-  };
+  // Convert "YYYY-MM-DD" strings to Date objects for Ark UI
+  // const selectedRange: DateValue[] =
+  //   startDate && endDate ? [fromISO(startDate)!, fromISO(endDate)!] : [];
+
 
   return (
     <InputGroup>
       <>
-        <InputElement position={'revert'}>
-          <PopoverRoot
-            open={isPopoverOpen}
-            onEscapeKeyDown={() => {
-              setIsPopoverOpen(false);
-            }}
-          >
-            <PopoverTrigger asChild>
-              <IconButton
-                size="sm"
-                variant="ghost"
-                aria-label="Date range help"
-                onClick={() => setIsPopoverOpen((prev) => !prev)}
+        {/* <InputLeftElement pointerEvents="none">
+          <CalendarIcon size={16} color="gray" />
+        </InputLeftElement> */}
+
+        {/* Invisible trigger covering the icon area or handled via specific button if preferred.
+          Here we wrap the Input interaction logic or use a specific trigger button.
+          Given the UI design, usually the icon is just visual and clicking the input types,
+          but we need a button to open the calendar. */}
+
+        <PopoverRoot open={open} onOpenChange={(d) => setOpen(d.open)} portalled>
+          <PopoverTrigger asChild>
+            <IconButton
+              size="sm"
+              variant="ghost"
+              position="absolute"
+              right={0}
+              zIndex={2}
+              aria-label="Open calendar"
+              // icon={<CalendarIcon size={16} />}
+              onClick={() => setOpen(!open)}
+            />
+          </PopoverTrigger>
+
+          <Portal>
+            <PopoverPositioner>
+              <PopoverContent
+                p={4}
+                w="320px"
+                bg="white"
+                boxShadow="xl"
+                borderRadius="md"
+                border="1px solid"
+                borderColor="gray.200"
+                zIndex={1500} // High z-index to sit above tables
               >
-                <Calendar size={16} />
-              </IconButton>
-            </PopoverTrigger>
+                <DatePicker.Root
+                  selectionMode="range"
+                  // value={selectedRange}
+                  onValueChange={(details) => {
+                    const [s, e] = details.value;
+                    if (!s) return;
 
-            <Portal>
-              <PopoverPositioner>
-                <PopoverContent p={4}>
-                  <PopoverArrow />
-                  <VStack align="start" gap={4}>
-                    <HStack>
-                      <Calendar size={16} />
-                      <Text fontWeight="semibold" fontSize="sm">
-                        Date Range Filter
-                      </Text>
-                    </HStack>
+                    const sISO = toISO(s as any);
+                    const eISO = e ? toISO(e as any) : sISO; // Handle partial selection
 
-                    <VStack align="start" gap={1}>
-                      <Text fontSize="sm" fontWeight="medium">
-                        Format:
-                      </Text>
-                      <Text fontSize="xs" color="gray.600">
-                        DD-MM-YYYY{DATE_SEPARATOR}DD-MM-YYYY
-                      </Text>
-                    </VStack>
+                    // Update text input immediately for feedback
+                    setInput(`${formatForDisplay(sISO)}${DATE_SEPARATOR}${formatForDisplay(eISO)}`);
 
-                    <VStack align="start" gap={1}>
-                      <Text fontSize="sm" fontWeight="medium">
-                        Tips:
-                      </Text>
-                      <Text fontSize="xs">• "15 to 20" → assumes current month/year</Text>
-                      <Text fontSize="xs">• Leave end blank → up to today</Text>
-                      <Text fontSize="xs">• Dates auto-swapped if reversed</Text>
-                      <Text fontSize="xs">• Press Enter on empty end → fills today</Text>
-                    </VStack>
+                    // Only trigger parent onChange when we have a conceptual range (start or start+end)
+                    // Usually better to wait for end date if expecting a range, but this updates live:
+                    onChange(`${sISO}|${eISO}`);
+                  }}
+                >
+                  <VStack gap={4} align="stretch">
+                    {/* --- Header & Navigation --- */}
+                    <DatePicker.Context>
+                      {(api) => (
+                        <HStack justify="space-between">
+                          <DatePicker.PrevTrigger asChild>
+                            <IconButton size="xs" variant="outline" aria-label="Prev">
+                              <ChevronLeft size={14} />
+                            </IconButton>
+                          </DatePicker.PrevTrigger>
 
-                    <VStack align="start" gap={1}>
-                      <Text fontSize="sm" fontWeight="medium">
-                        Shortcut:
-                      </Text>
-                      <HStack>
-                        <Kbd>Ctrl</Kbd>
-                        <Text>+</Text>
-                        <Kbd>D</Kbd>
-                      </HStack>
-                    </VStack>
+                          <DatePicker.ViewTrigger asChild>
+                            <Button size="sm" variant="ghost" fontWeight="bold">
+                              <DatePicker.RangeText />
+                            </Button>
+                          </DatePicker.ViewTrigger>
+
+                          <DatePicker.NextTrigger asChild>
+                            <IconButton size="xs" variant="outline" aria-label="Next">
+                              <ChevronRight size={14} />
+                            </IconButton>
+                          </DatePicker.NextTrigger>
+                        </HStack>
+                      )}
+                    </DatePicker.Context>
+
+                    {/* --- DAY View --- */}
+                    <DatePicker.View view="day">
+                      <DatePicker.Context>
+                        {(api) => (
+                          <DatePicker.Table>
+                            <DatePicker.TableHead>
+                              <DatePicker.TableRow>
+                                {api.weekDays.map((day) => (
+                                  <DatePicker.TableHeader key={day.short}>
+                                    <Text fontSize="xs" color="gray.500" textAlign="center">
+                                      {day.short}
+                                    </Text>
+                                  </DatePicker.TableHeader>
+                                ))}
+                              </DatePicker.TableRow>
+                            </DatePicker.TableHead>
+                            <DatePicker.TableBody>
+                              {api.weeks.map((week, id) => (
+                                <DatePicker.TableRow key={id}>
+                                  {week.map((day, id) => (
+                                    <DatePicker.TableCell key={id} value={day}>
+                                      <DatePicker.TableCellTrigger asChild>
+                                        <Box
+                                          w="100%"
+                                          p={1}
+                                          textAlign="center"
+                                          fontSize="sm"
+                                          borderRadius="md"
+                                          cursor="pointer"
+                                          _hover={{ bg: 'blue.50' }}
+                                          _selected={{ bg: 'blue.500', color: 'white' }}
+                                          _inRange={{ bg: 'blue.100', color: 'blue.800' }}
+                                          // Visual tweaks for disabled/outside days
+                                          // opacity={day.outside ? 0.4 : 1}
+                                        >
+                                          {day.day}
+                                        </Box>
+                                      </DatePicker.TableCellTrigger>
+                                    </DatePicker.TableCell>
+                                  ))}
+                                </DatePicker.TableRow>
+                              ))}
+                            </DatePicker.TableBody>
+                          </DatePicker.Table>
+                        )}
+                      </DatePicker.Context>
+                    </DatePicker.View>
+
+                    {/* --- MONTH View --- */}
+                    <DatePicker.View view="month">
+                      <DatePicker.Context>
+                        {(api) => (
+                          <DatePicker.Table>
+                            <DatePicker.TableBody>
+                              {api
+                                .getMonthsGrid({ columns: 4, format: 'short' })
+                                .map((row, rowId) => (
+                                  <DatePicker.TableRow key={rowId}>
+                                    {row.map((month, colId) => (
+                                      <DatePicker.TableCell key={colId} value={month.value}>
+                                        <DatePicker.TableCellTrigger asChild>
+                                          <Button variant="ghost" size="sm" w="full">
+                                            {month.label}
+                                          </Button>
+                                        </DatePicker.TableCellTrigger>
+                                      </DatePicker.TableCell>
+                                    ))}
+                                  </DatePicker.TableRow>
+                                ))}
+                            </DatePicker.TableBody>
+                          </DatePicker.Table>
+                        )}
+                      </DatePicker.Context>
+                    </DatePicker.View>
+
+                    {/* --- YEAR View --- */}
+                    <DatePicker.View view="year">
+                      <DatePicker.Context>
+                        {(api) => (
+                          <DatePicker.Table>
+                            <DatePicker.TableBody>
+                              {api.getYearsGrid({ columns: 4 }).map((row, rowId) => (
+                                <DatePicker.TableRow key={rowId}>
+                                  {row.map((year, colId) => (
+                                    <DatePicker.TableCell key={colId} value={year.value}>
+                                      <DatePicker.TableCellTrigger asChild>
+                                        <Button variant="ghost" size="sm" w="full">
+                                          {year.label}
+                                        </Button>
+                                      </DatePicker.TableCellTrigger>
+                                    </DatePicker.TableCell>
+                                  ))}
+                                </DatePicker.TableRow>
+                              ))}
+                            </DatePicker.TableBody>
+                          </DatePicker.Table>
+                        )}
+                      </DatePicker.Context>
+                    </DatePicker.View>
                   </VStack>
-                </PopoverContent>
-              </PopoverPositioner>
-            </Portal>
-          </PopoverRoot>
+                </DatePicker.Root>
+              </PopoverContent>
+            </PopoverPositioner>
+          </Portal>
+        </PopoverRoot>
 
-          <Input
-            ref={inputRef}
-            placeholder="15-06-2025 to 20-06-2025"
-            value={input}
-            size="sm"
-            disabled={disabled}
-            onChange={(e) => handleChange(e.target.value)}
-            onBlur={handleBlur}
-            onKeyDown={handleKeyDown}
-            pr={input ? '10' : undefined} // make room for clear button
-            w="100%"
-          />
-
-          {input && (
-            <InputElement>
-              <IconButton
-                size="sm"
-                variant="ghost"
-                aria-label="Clear date range"
-                onClick={handleClear}
-                w="100%"
-              />
-            </InputElement>
-          )}
-        </InputElement>
+        <Input
+          pl={10} // Space for LeftElement
+          pr={10} // Space for Right Trigger
+          ref={inputRef}
+          placeholder="DD-MM-YYYY to DD-MM-YYYY"
+          value={input}
+          size="sm"
+          disabled={disabled}
+          onChange={(e) => handleChange(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+        />
       </>
     </InputGroup>
   );
