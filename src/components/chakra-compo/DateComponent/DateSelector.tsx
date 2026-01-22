@@ -11,9 +11,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Calendar } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-// --- Helper Functions ---
 function formatDate(date) {
   if (!date) return '';
   const dd = String(date.getDate()).padStart(2, '0');
@@ -26,23 +25,30 @@ function parseDate(value) {
   const parts = value.split('-');
   if (parts.length !== 3) return null;
   const [dd, mm, yyyy] = parts;
-  const month = parseInt(mm) - 1;
   const day = parseInt(dd);
+  const month = parseInt(mm) - 1;
   const year = parseInt(yyyy);
+
+  if (isNaN(day) || isNaN(month) || isNaN(year) || yyyy.length !== 4) return null;
+
   const date = new Date(year, month, day);
-  // Optional: Add logic to check for valid dates only
-  return isNaN(date.getTime()) ? null : date;
+  return date.getDate() === day && date.getMonth() === month ? date : null;
 }
 
 export default function MDSDatePicker({
   value,
   onChange,
-  width = '220px', // Slightly wider to accommodate icon
+  width = '220px',
   showLabel = true,
   label = 'Select date',
 }) {
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState(value || new Date());
+  const [inputValue, setInputValue] = useState(formatDate(value));
+
+  useEffect(() => {
+    setInputValue(formatDate(value));
+  }, [value]);
 
   const daysInMonth = new Date(current.getFullYear(), current.getMonth() + 1, 0).getDate();
   const firstDay = new Date(current.getFullYear(), current.getMonth(), 1).getDay();
@@ -61,8 +67,25 @@ export default function MDSDatePicker({
     setOpen(false);
   };
 
+  const handleKeyDown = (e) => {
+    if (!open) return;
+    switch (e.key) {
+      case 'ArrowLeft':
+        handlePrevMonth();
+        break;
+      case 'ArrowRight':
+        handleNextMonth();
+        break;
+      case 'Escape':
+        setOpen(false);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
-    <Box width={width}>
+    <Box width={width} onKeyDown={handleKeyDown}>
       {showLabel && (
         <Text fontSize="xs" color="fg.muted" mb={1} fontWeight="medium">
           {label}
@@ -77,11 +100,16 @@ export default function MDSDatePicker({
         <Group attached w="full">
           <Input
             placeholder="DD-MM-YYYY"
-            value={formatDate(value)}
+            value={inputValue}
             onChange={(e) => {
-              const d = parseDate(e.target.value);
-              // Only trigger onChange if it's a valid full date
-              if (d && e.target.value.length === 10) onChange(d);
+              const val = e.target.value;
+              setInputValue(val);
+
+              const d = parseDate(val);
+              if (d) {
+                onChange(d);
+                setCurrent(d);
+              }
             }}
             size="sm"
             autoComplete="off"
@@ -99,10 +127,16 @@ export default function MDSDatePicker({
         </Group>
 
         <Popover.Positioner>
-          <Popover.Content width="300px" p={4} boxShadow="xl" zIndex={1000} borderRadius="md">
+          <Popover.Content
+            width="300px"
+            p={4}
+            boxShadow="xl"
+            zIndex={1000}
+            borderRadius="md"
+            outline="none"
+          >
             <Popover.Arrow />
 
-            {/* HEADER */}
             <HStack justify="space-between" mb={4}>
               <IconButton
                 size="xs"
@@ -128,7 +162,6 @@ export default function MDSDatePicker({
               </IconButton>
             </HStack>
 
-            {/* CALENDAR GRID */}
             <Grid templateColumns="repeat(7, 1fr)" gap={1} textAlign="center">
               {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
                 <Text key={`${d}-${i}`} fontSize="xs" fontWeight="bold" color="fg.subtle" py={1}>
@@ -160,12 +193,16 @@ export default function MDSDatePicker({
                     minW="32px"
                     h="32px"
                     fontSize="xs"
+                    borderRadius="md"
                   >
                     {day}
                   </Button>
                 );
               })}
             </Grid>
+            <Text fontSize="10px" color="fg.muted" mt={3} textAlign="center">
+              Use Arrow Keys to change months • Esc to close
+            </Text>
           </Popover.Content>
         </Popover.Positioner>
       </Popover.Root>
