@@ -14,6 +14,8 @@ const MDSButton = ({
   loadingText,
   rounded,
   type = 'button',
+  textColor = 'white',
+  borderColor,
 }: IMDSButtonTypes) => {
   return (
     <Button
@@ -21,11 +23,13 @@ const MDSButton = ({
       size={size}
       variant={variant}
       disabled={isDisabled}
-      colorPalette={colorScheme}
       loading={loading}
       loadingText={loadingText}
       rounded={rounded}
       type={type}
+      background={colorScheme}
+      color={textColor}
+      border={borderColor}
     >
       <HStack gap={1}>
         {leftIcon}

@@ -44,3 +44,9 @@ export { default as usePagination } from './components/customHooks/Pagination.ho
 export type { UsePaginationOptions } from './components/customHooks/Pagination.hook';
 export { default as useDebouncedSearch } from './components/customHooks/useDeboucedSearch.hook';
 export type { UseDebouncedSearchOptions } from './components/customHooks/useDeboucedSearch.hook';
+
+export type { IMDSDateRangePickerTypes } from './components/chakra-compo/DateComponent/DateRangeSelector';
+export type { IMDSDatePickerTypes } from './components/chakra-compo/DateComponent/DateSelector';
+
+export { default as MDSDateRangePicker } from './components/chakra-compo/DateComponent/DateRangeSelector';
+export { default as MDSDatePicker } from './components/chakra-compo/DateComponent/DateSelector';

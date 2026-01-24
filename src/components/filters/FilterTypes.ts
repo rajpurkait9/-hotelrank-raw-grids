@@ -3,14 +3,24 @@ import { JSX } from 'react';
 export interface IFilterConfig {
   id: string;
   label: string;
-  type?: 'date' | 'text' | 'select' | 'checkbox' | 'radio' | 'number' | 'combobox';
-  value: string | number | undefined | boolean;
+  type?:
+    | 'date'
+    | 'text'
+    | 'select'
+    | 'checkbox'
+    | 'radio'
+    | 'number'
+    | 'combobox'
+    | 'date-range';
+  value: string | number | undefined | boolean | Date;
   options?: { label: string; value: string }[];
   onChange?: (value: any) => void;
   visible: boolean;
   size?: 0.5 | 1 | 1.5 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5;
   customComponent?: JSX.Element;
   placeholder?: string;
+  startDate?: string | null;
+  endDate?: string | null;
 }
 
 export interface IMainFilterType {

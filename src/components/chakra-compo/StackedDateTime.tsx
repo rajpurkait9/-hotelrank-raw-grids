@@ -14,6 +14,7 @@ export interface StackedDateTimeProps {
   timeFontSize?: string | number;
   timeFontWeight?: string | number;
   timeColor?: string;
+  showTime?: boolean;
 }
 
 export default function StackedDateTime({
@@ -29,6 +30,7 @@ export default function StackedDateTime({
   timeColor = 'gray.500',
   timeFontSize = '12px',
   timeFontWeight = '400',
+  showTime = true,
 }: StackedDateTimeProps) {
   return (
     <Stack gap={0.5} align={align}>
@@ -40,13 +42,15 @@ export default function StackedDateTime({
         })}
       </Text>
 
-      <Text fontSize={timeFontSize} fontWeight={timeFontWeight} color={timeColor}>
-        {formatDateTime({
-          value,
-          variant: timeVariant,
-          format: timeFormat,
-        })}
-      </Text>
+      {showTime && (
+        <Text fontSize={timeFontSize} fontWeight={timeFontWeight} color={timeColor}>
+          {formatDateTime({
+            value,
+            variant: timeVariant,
+            format: timeFormat,
+          })}
+        </Text>
+      )}
     </Stack>
   );
 }

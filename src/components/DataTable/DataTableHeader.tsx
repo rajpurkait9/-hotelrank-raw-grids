@@ -47,7 +47,7 @@ export default function TableHeader() {
                   userSelect: 'none',
                 }}
               >
-                {col?.label}
+                {col.label}
 
                 {col?.sortable &&
                   (isSorted ? (
@@ -82,8 +82,6 @@ export default function TableHeader() {
           </Table.ColumnHeader>
         )}
       </Table.Row>
-      {/* </SortableContext>
-      </DndContext> */}
     </Table.Header>
   );
 }

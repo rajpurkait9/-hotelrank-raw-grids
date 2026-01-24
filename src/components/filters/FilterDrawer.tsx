@@ -19,13 +19,13 @@ import { Bookmark, Delete, Edit2, Filter, Settings } from 'lucide-react';
 import { withChildren } from '../../utils/chakra-slot';
 import MDSCheckbox from '../chakra-compo/CheckBox';
 import MDSCombobox from '../chakra-compo/Combobox';
-import MDSDateSelector from '../chakra-compo/DateComponent/DateSelector';
+import MDSDateRangePicker from '../chakra-compo/DateComponent/DateRangeSelector';
+import MDSDatePicker from '../chakra-compo/DateComponent/DateSelector';
 import MDSInput from '../chakra-compo/Input';
 import MDSSelectBox from '../chakra-compo/SelectBox';
 import { IFilterConfig, IFilterDrawerProps } from './FilterTypes';
 import { addPreset, deletePreset, getPresets, presetStore } from './presetStore';
 import SortableFilterItem from './SortableFilterItem';
-import MDSDatePicker from '../chakra-compo/DateComponent/DateSelector';
 
 const DrawerRoot = withChildren(Drawer.Root);
 const DrawerTrigger = withChildren(Drawer.Trigger);
@@ -46,6 +46,8 @@ export const renderFilter = (filter: IFilterConfig, drawerOpen?: boolean) => {
   if (filter.customComponent) {
     return filter.customComponent;
   }
+
+  console.log(filter.type);
 
   switch (filter.type) {
     case 'text':
@@ -92,8 +94,21 @@ export const renderFilter = (filter: IFilterConfig, drawerOpen?: boolean) => {
         //   onChange={filter.onChange as (v: string | undefined) => void}
         // />
         <MDSDatePicker
-          value={filter.value as string}
-          onChange={filter.onChange as (v: string | undefined) => void}
+          value={filter.value as Date}
+          onChange={filter.onChange as (v: string | Date | null) => void}
+          visible={drawerOpen}
+          label={filter.label}
+        />
+      );
+
+    case 'date-range':
+      return (
+        <MDSDateRangePicker
+          startDate={filter.startDate ? new Date(filter.startDate) : undefined}
+          endDate={filter.endDate ? new Date(filter.endDate) : undefined}
+          onChange={filter.onChange as (v: string | Date | null | undefined) => void}
+          visible={drawerOpen}
+          label={filter.label}
         />
       );
 

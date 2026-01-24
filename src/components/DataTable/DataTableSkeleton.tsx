@@ -7,10 +7,7 @@ interface DataTableSkeletonProps {
   columns: number;
 }
 
-export default function DataTableSkeleton({
-  rows = 6,
-  columns,
-}: DataTableSkeletonProps) {
+export default function DataTableSkeleton({ rows = 6, columns }: DataTableSkeletonProps) {
   return (
     <Table.Body>
       {Array.from({ length: rows }).map((_, rowIndex) => (

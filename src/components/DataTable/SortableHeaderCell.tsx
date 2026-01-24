@@ -3,8 +3,8 @@
 import { Box, HStack, Table } from '@chakra-ui/react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical } from 'lucide-react';
-import { useRef } from 'react';
+import { ArrowLeftRight, GripVertical } from 'lucide-react';
+import { useRef, useState } from 'react';
 // import { setColumnWidth } from './DataTableActions';
 import { useStore } from '@tanstack/react-store';
 import { setColumnWidth } from './DataTableActions';
@@ -51,6 +51,8 @@ export default function SortableHeaderCell({
     document.addEventListener('mouseup', onUp);
   };
 
+  const [showResizeIcon, setShowResizeIcon] = useState(false);
+
   return (
     <Table.ColumnHeader
       ref={setNodeRef}
@@ -66,7 +68,7 @@ export default function SortableHeaderCell({
       }}
       {...attributes}
     >
-      <HStack position="relative">
+      <HStack position="relative" onMouseDown={onMouseDown}>
         <span {...listeners}>
           <GripVertical
             size={12}
@@ -82,12 +84,20 @@ export default function SortableHeaderCell({
           right={0}
           top={0}
           h="100%"
-          w="5px"
+          w="10px"
           cursor="col-resize"
-          background={'gray.400'}
           onMouseDown={onMouseDown}
-          _hover={{ bg: 'gray.600' }}
-        />
+          onMouseEnter={() => setShowResizeIcon(true)}
+          onMouseLeave={() => setShowResizeIcon(false)}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          zIndex={2}
+        >
+          {showResizeIcon && (
+            <ArrowLeftRight size={14} style={{ pointerEvents: 'none', opacity: 0.8 }} />
+          )}
+        </Box>
       </HStack>
     </Table.ColumnHeader>
   );

@@ -10,8 +10,15 @@ import {
   Popover,
   Text,
 } from '@chakra-ui/react';
-import { Calendar } from 'lucide-react';
+import { Calendar, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { withChildren } from '../../../utils/chakra-slot';
+
+const PopoverRoot = withChildren(Popover.Root);
+const PopoverContent = withChildren(Popover.Content);
+const PopoverArrow = withChildren(Popover.Arrow);
+const PopoverTrigger = withChildren(Popover.Trigger);
+const PopoverPositioner = withChildren(Popover.Positioner);
 
 function formatDate(date) {
   if (!date) return '';
@@ -35,13 +42,21 @@ function parseDate(value) {
   return date.getDate() === day && date.getMonth() === month ? date : null;
 }
 
+export type IMDSDatePickerTypes = {
+  value?: Date;
+  onChange: (date: Date | null) => void;
+  width?: string;
+  visible?: boolean;
+  label?: string;
+};
+
 export default function MDSDatePicker({
   value,
   onChange,
   width = '220px',
-  showLabel = true,
+  visible = true,
   label = 'Select date',
-}) {
+}: IMDSDatePickerTypes) {
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState(value || new Date());
   const [inputValue, setInputValue] = useState(formatDate(value));
@@ -84,20 +99,40 @@ export default function MDSDatePicker({
     }
   };
 
+  const clearDate = () => {
+    setInputValue('');
+    onChange(null);
+  };
+
   return (
     <Box width={width} onKeyDown={handleKeyDown}>
-      {showLabel && (
+      {!visible && (
         <Text fontSize="xs" color="fg.muted" mb={1} fontWeight="medium">
           {label}
         </Text>
       )}
 
-      <Popover.Root
+      <PopoverRoot
         open={open}
         onOpenChange={(e) => setOpen(e.open)}
         positioning={{ placement: 'bottom-start', gutter: 4 }}
       >
-        <Group attached w="full">
+        <Group attached w="full" position="relative">
+          {inputValue && (
+            <IconButton
+              size="xs"
+              variant="ghost"
+              aria-label="Clear date"
+              onClick={clearDate}
+              position="absolute"
+              right="32px"
+              top="50%"
+              transform="translateY(-50%)"
+              zIndex={1}
+            >
+              <X size={14} />
+            </IconButton>
+          )}
           <Input
             placeholder="DD-MM-YYYY"
             value={inputValue}
@@ -114,7 +149,7 @@ export default function MDSDatePicker({
             size="sm"
             autoComplete="off"
           />
-          <Popover.Trigger asChild>
+          <PopoverTrigger asChild>
             <InputAddon
               cursor="pointer"
               px={2}
@@ -123,11 +158,11 @@ export default function MDSDatePicker({
             >
               <Calendar size={16} />
             </InputAddon>
-          </Popover.Trigger>
+          </PopoverTrigger>
         </Group>
 
-        <Popover.Positioner>
-          <Popover.Content
+        <PopoverPositioner>
+          <PopoverContent
             width="300px"
             p={4}
             boxShadow="xl"
@@ -135,7 +170,7 @@ export default function MDSDatePicker({
             borderRadius="md"
             outline="none"
           >
-            <Popover.Arrow />
+            <PopoverArrow />
 
             <HStack justify="space-between" mb={4}>
               <IconButton
@@ -203,9 +238,9 @@ export default function MDSDatePicker({
             <Text fontSize="10px" color="fg.muted" mt={3} textAlign="center">
               Use Arrow Keys to change months • Esc to close
             </Text>
-          </Popover.Content>
-        </Popover.Positioner>
-      </Popover.Root>
+          </PopoverContent>
+        </PopoverPositioner>
+      </PopoverRoot>
     </Box>
   );
 }

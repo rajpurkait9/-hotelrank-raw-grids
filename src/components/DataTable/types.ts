@@ -5,14 +5,14 @@ export type SortOrder = 'asc' | 'desc';
 
 export interface Column {
   id: string;
-  label: string | React.ReactNode;
+  label: string;
   minWidth?: number | string;
   align?: 'left' | 'center' | 'right';
   sortable?: boolean;
   backgroundColor?: string;
 }
 
-export interface DataTableAction<T = unknown> {
+export interface DataTableAction<T> {
   icon: JSX.Element;
   label: string;
   onClick: (row: T) => void;
@@ -37,12 +37,11 @@ export type ActionHeaderProps = {
   width?: string;
   showColumnVisibilityMenu?: boolean;
   backgroundColorColumnVisibilityMenu?: string;
-
   showSNo?: boolean;
   indexChildren?: React.ReactNode;
 };
 
-export interface DataTableProps<T = unknown> {
+export interface DataTableProps<T> {
   tableId: string;
   headers?: Column[];
   data?: T[];

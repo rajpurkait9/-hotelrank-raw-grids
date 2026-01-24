@@ -71,6 +71,8 @@ export interface IMDSButtonTypes {
   loadingText?: string;
   rounded?: 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'xs';
   type?: 'submit' | 'reset' | 'button';
+  textColor?: string;
+  borderColor?: string;
 }
 
 export interface IMDSComboboxTypes<T> {

@@ -1,6 +1,6 @@
 'use client';
 
-import { DatePicker, DateValue } from '@ark-ui/react';
+import { DatePicker } from '@ark-ui/react';
 import {
   Box,
   Button,
@@ -13,7 +13,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { withChildren } from '../../utils/chakra-slot';
 import {
@@ -24,6 +24,7 @@ import {
   parsePartialDate,
 } from '../filters/shared/dateUtils';
 
+// not in use
 
 /* ---------------- Popover slots ---------------- */
 const PopoverRoot = withChildren(Popover.Root);
@@ -138,7 +139,6 @@ export default function DateRangeFilter({
   // Convert "YYYY-MM-DD" strings to Date objects for Ark UI
   // const selectedRange: DateValue[] =
   //   startDate && endDate ? [fromISO(startDate)!, fromISO(endDate)!] : [];
-
 
   return (
     <InputGroup>
