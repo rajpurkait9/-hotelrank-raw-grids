@@ -72,7 +72,7 @@ export default function TableRows({
                     <MoreHorizontal size={16} />
                   </IconButton>
                 </MenuTrigger>
-                <Portal>
+                {/* <Portal> */}
                   <MenuPositioner>
                     <MenuContent>
                       {actions
@@ -94,7 +94,7 @@ export default function TableRows({
                         ))}
                     </MenuContent>
                   </MenuPositioner>
-                </Portal>
+                {/* </Portal> */}
               </Menu.Root>
             </Table.Cell>
           )}

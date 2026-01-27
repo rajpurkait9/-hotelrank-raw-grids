@@ -58,6 +58,7 @@ function App() {
         onRowSelectEvent="left"
         actionConfig={{
           showSNo: true,
+          showActionColumn: true,
         }}
         actions={[
           {

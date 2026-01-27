@@ -113,7 +113,7 @@ export default function DataTable<T extends Record<string, unknown>>({
               </Box>
             )}
 
-            <Table.Root variant="outline" w="100%" size={density}>
+            <Table.Root variant="outline" w="100%" size={density} key={tableId}>
               <TableHeader />
 
               {showSkeleton ? (
