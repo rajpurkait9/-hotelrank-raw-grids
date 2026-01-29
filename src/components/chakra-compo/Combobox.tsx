@@ -42,18 +42,21 @@ export default function MDSCombobox<T>({
   itemProps,
 }: IMDSComboboxTypes<T>) {
   const [inputValue, setInputValue] = useState('');
+
+  const safeItems = useMemo(() => (Array.isArray(items) ? items : []), [items]);
+
   const { collection, set } = useListCollection<T>({
-    initialItems: items,
+    initialItems: safeItems,
     itemToString,
     itemToValue,
   });
 
   const filteredItems = useMemo(() => {
-    if (!inputValue) return items;
+    if (!inputValue) return safeItems;
 
     const query = inputValue.toLowerCase();
 
-    return items.filter((item) => itemToString(item).toLowerCase().includes(query));
+    return safeItems.filter((item) => itemToString(item).toLowerCase().includes(query));
   }, [items, inputValue, itemToString]);
 
   useEffect(() => {

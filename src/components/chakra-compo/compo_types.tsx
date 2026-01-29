@@ -1,4 +1,5 @@
 import { ComboboxInputProps, ComboboxRootProps, ConditionalValue } from '@chakra-ui/react';
+import { FilterOption } from '../filters/FilterTypes';
 
 export interface IMDSInputTypes {
   icon?: React.ReactNode;
@@ -22,10 +23,10 @@ export interface IMDSInputTypes {
   step?: number;
 }
 
-export interface IMDSSelectBoxTypes {
-  options: { label: string; value: string }[];
+export interface IMDSSelectBoxTypes<T = unknown> {
+  options: FilterOption<T>[];
   value?: string;
-  onChange?: (value: string) => void;
+  onChange?: (value: T | undefined) => void;
   placeholder?: string;
   size?: 'sm' | 'md' | 'lg' | 'xs';
   width?: string;

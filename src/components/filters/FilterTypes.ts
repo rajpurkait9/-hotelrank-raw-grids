@@ -1,19 +1,16 @@
-import { JSX } from 'react';
+import { JSX, ReactNode } from 'react';
 
-export interface IFilterConfig {
+export interface FilterOption<T = unknown> {
+  label: ReactNode;
+  value: T;
+  displayValue?: string | ReactNode;
+}
+export interface IFilterConfig<T = unknown> {
   id: string;
   label: string;
-  type?:
-    | 'date'
-    | 'text'
-    | 'select'
-    | 'checkbox'
-    | 'radio'
-    | 'number'
-    | 'combobox'
-    | 'date-range';
+  type?: 'date' | 'text' | 'select' | 'checkbox' | 'radio' | 'number' | 'combobox' | 'date-range';
   value: string | number | undefined | boolean | Date;
-  options?: { label: string; value: string }[];
+  options?: FilterOption<T>[];
   onChange?: (value: any) => void;
   visible: boolean;
   size?: 0.5 | 1 | 1.5 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5;

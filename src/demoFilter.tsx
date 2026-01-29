@@ -10,13 +10,15 @@ type HeaderProps = {
 };
 
 export const DemoFilter = ({ search, onSearchChange }: HeaderProps) => {
+  const [activePresetName, setActivePresetName] = useState<string | null>(null);
+
   const [filters, setFilters] = useState<IFilterConfig[]>([
     {
       id: 'search input',
       visible: true,
       label: 'Search',
       value: search,
-      onChange: (v: string | number | boolean | undefined) => {
+      onChange: (v) => {
         onSearchChange(v as string);
         updateFilterValue('search input', v);
       },
@@ -27,18 +29,17 @@ export const DemoFilter = ({ search, onSearchChange }: HeaderProps) => {
       id: 'checkbox',
       visible: true,
       label: 'Checkbox',
-      value: '',
-      onChange: (v: boolean | undefined | number | string) => updateFilterValue('checkbox', v),
+      value: false,
+      onChange: (v) => updateFilterValue('checkbox', v),
       size: 1,
       type: 'checkbox',
     },
-
     {
       id: 'select',
       visible: true,
       label: 'Select Box',
-      value: '',
-      onChange: (v: string | number | boolean | undefined) => updateFilterValue('select', v),
+      value: undefined, // Start undefined
+      onChange: (v) => updateFilterValue('select', v),
       size: 1.5,
       type: 'select',
       options: [
@@ -51,22 +52,14 @@ export const DemoFilter = ({ search, onSearchChange }: HeaderProps) => {
       id: 'Date',
       visible: true,
       label: 'Date Picker',
-      value: '',
-      onChange: (v: string | number | boolean | undefined) => updateFilterValue('Date', v),
+      value: undefined,
+      onChange: (v) => updateFilterValue('Date', v),
       size: 2.5,
       type: 'date',
     },
-    // {
-    //   id: 'DateRange',
-    //   visible: true,
-    //   label: 'Date Range',
-    //   value: '',
-    //   onChange: (v: string | number | boolean | undefined) => updateFilterValue('DateRange', v),
-    //   size: 2.5,
-    //   type: 'date-range',
-    // },
   ]);
 
+  // Helper to update a single filter's value safely
   function updateFilterValue(id: string, value: any) {
     setFilters((prev) => prev.map((f) => (f.id === id ? { ...f, value } : f)));
   }
@@ -76,30 +69,21 @@ export const DemoFilter = ({ search, onSearchChange }: HeaderProps) => {
   }
 
   function handleSize(id: string, size: number) {
-    type UpdatedFilter = IFilterConfig & { size: number };
-
-    setFilters((prev: IFilterConfig[]) =>
-      prev.map((f) => (f.id === id ? ({ ...f, size } as UpdatedFilter) : f)),
-    );
+    setFilters((prev: any) => prev.map((f) => (f.id === id ? { ...f, size } : f)));
   }
 
+  // Clear all filters to undefined
   function handleClear() {
     setFilters((prev) =>
       prev.map((f) => ({
         ...f,
-        value: '',
+        value: undefined,
       })),
     );
+    setActivePresetName(null);
   }
 
-  const activeFilterState = filters.reduce(
-    (obj, f) => {
-      obj[f.id] = f.value;
-      return obj;
-    },
-    {} as Record<string, any>,
-  );
-
+  // Load Order (Persist Layout)
   useEffect(() => {
     const order = loadOrder('demo');
     if (!order.length) return;
@@ -109,6 +93,14 @@ export const DemoFilter = ({ search, onSearchChange }: HeaderProps) => {
       return order.map((id) => map[id]).filter(Boolean);
     });
   }, []);
+
+  const activeFilterState = filters.reduce(
+    (obj, f) => {
+      obj[f.id] = f.value;
+      return obj;
+    },
+    {} as Record<string, any>,
+  );
 
   return (
     <FiltersToolBar
@@ -128,14 +120,14 @@ export const DemoFilter = ({ search, onSearchChange }: HeaderProps) => {
       }}
       onSizeChange={handleSize}
       pageKey="district-price-history-filter"
-      // not in use
       onClear={handleClear}
       maxToolbarUnits={5}
       currentFilters={activeFilterState}
-      onLoadPreset={(filters, name) => {
-        console.log('Loaded preset:', name, filters);
+      onLoadPreset={(loadedFilters, name) => {
+        setFilters(loadedFilters);
+        setActivePresetName(name ?? null);
       }}
-      activePresetName={null}
+      activePresetName={activePresetName}
     />
   );
 };

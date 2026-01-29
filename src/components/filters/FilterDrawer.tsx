@@ -14,8 +14,9 @@ import {
 
 import { closestCenter, DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useStore } from '@tanstack/react-store';
 import { Bookmark, Delete, Edit2, Filter, Settings } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { withChildren } from '../../utils/chakra-slot';
 import MDSCheckbox from '../chakra-compo/CheckBox';
 import MDSCombobox from '../chakra-compo/Combobox';
@@ -24,7 +25,7 @@ import MDSDatePicker from '../chakra-compo/DateComponent/DateSelector';
 import MDSInput from '../chakra-compo/Input';
 import MDSSelectBox from '../chakra-compo/SelectBox';
 import { IFilterConfig, IFilterDrawerProps } from './FilterTypes';
-import { addPreset, deletePreset, getPresets, presetStore } from './presetStore';
+import { addPreset, deletePreset, getPresets, PresetItem } from './presetStore';
 import SortableFilterItem from './SortableFilterItem';
 
 const DrawerRoot = withChildren(Drawer.Root);
@@ -46,8 +47,6 @@ export const renderFilter = (filter: IFilterConfig, drawerOpen?: boolean) => {
   if (filter.customComponent) {
     return filter.customComponent;
   }
-
-  console.log(filter.type);
 
   switch (filter.type) {
     case 'text':
@@ -118,10 +117,13 @@ export const renderFilter = (filter: IFilterConfig, drawerOpen?: boolean) => {
           visible={true}
           label={filter.label}
           // value={filter.value }
-          items={filter.options}
-          itemToString={(i) => i.label}
-          itemToValue={(i) => i.value}
-          renderItem={(item) => <span>{item.label}</span>}
+          // items={filter.options?.map((item) => ({
+          //   ...item,
+          //   label: String(item.label),
+          // }))}
+          itemToString={(i) => String(i.label)}
+          itemToValue={(i: { value: string }) => i.value}
+          renderItem={(item: { label: string; value: string }) => <span>{item.label}</span>}
         />
       );
 
@@ -148,8 +150,24 @@ export const FiltersDrawer = ({
   open,
   onOpenChange,
 }: DrawerProps) => {
-  const state = useStore(presetStore);
-  const presets = state[pageKey] ?? getPresets(pageKey);
+  const [presets, setPresets] = useState<PresetItem[]>([]);
+
+  useEffect(() => {
+    const refreshPresets = () => {
+      setPresets(getPresets(pageKey));
+    };
+
+    refreshPresets();
+
+    // Listen for changes in the same window or other tabs
+    window.addEventListener('storage', refreshPresets);
+    window.addEventListener('storage_updated', refreshPresets);
+
+    return () => {
+      window.removeEventListener('storage', refreshPresets);
+      window.removeEventListener('storage_updated', refreshPresets);
+    };
+  }, [pageKey]);
 
   const handleSave = () => {
     const name = prompt('Preset name?');
@@ -164,7 +182,7 @@ export const FiltersDrawer = ({
     );
 
     addPreset(pageKey, {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       name,
       date: new Date().toISOString(),
       values,

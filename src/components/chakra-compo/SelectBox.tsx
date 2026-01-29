@@ -1,6 +1,7 @@
 'use client';
 
-import { Field, Select, createListCollection } from '@chakra-ui/react';
+import { CloseButton, Field, Select, createListCollection } from '@chakra-ui/react';
+import { useMemo } from 'react';
 import { withChildren } from '../../utils/chakra-slot';
 import { IMDSSelectBoxTypes } from './compo_types';
 
@@ -36,9 +37,21 @@ const MDSSelectBox = ({
   errorText,
   visible,
 }: IMDSSelectBoxTypes) => {
-  const collection = createListCollection({
-    items: options,
-  });
+  // 1. Memoize collection to prevent internal resets
+  const collection = useMemo(() => {
+    return createListCollection({
+      items: options,
+    });
+  }, [options]);
+
+  const selectedOption = options.find((o) => o.value === value);
+
+  // 2. Aggressive Event Stopping
+  const handleClear = (e: React.PointerEvent<HTMLButtonElement> | React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation(); // Stops the menu from toggling
+    onChange?.(undefined); // Triggers the clear
+  };
 
   return (
     <FieldRoot disabled={isDisabled} required={required}>
@@ -47,8 +60,11 @@ const MDSSelectBox = ({
         variant={variant}
         size={size}
         width={width}
+        // 3. Handle undefined value by passing empty array
         value={value ? [value] : []}
-        onValueChange={(details) => onChange?.(details.value[0])}
+        onValueChange={(details) => {
+          onChange?.(details.value[0]);
+        }}
       >
         <SelectHiddenSelect />
 
@@ -56,17 +72,39 @@ const MDSSelectBox = ({
 
         <SelectControl>
           <SelectTrigger>
-            <SelectValueText placeholder={placeholder} />
+            <SelectValueText placeholder={placeholder}>
+              {selectedOption?.displayValue ?? selectedOption?.label}
+            </SelectValueText>
           </SelectTrigger>
+
           <SelectIndicatorGroup>
+            {value && !isDisabled && (
+              // 4. Wrap CloseButton to ensure it has its own layer
+              <div
+                style={{ pointerEvents: 'auto', display: 'flex', alignItems: 'center' }}
+                // Stop propagation on the wrapper too
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <CloseButton
+                  size="sm"
+                  variant="ghost"
+                  // 5. Critical: Stop PointerDown (Zag/Ark UI uses this for triggers)
+                  onPointerDown={handleClear}
+                  onClick={handleClear}
+                  position="relative"
+                  zIndex={10}
+                />
+              </div>
+            )}
             <SelectIndicator />
           </SelectIndicatorGroup>
         </SelectControl>
 
         <SelectPositioner>
           <SelectContent>
-            {collection.items.map((item) => (
-              <SelectItem key={item.value} item={item}>
+            {collection.items.map((item, index) => (
+              <SelectItem key={index} item={item}>
                 {item.label}
                 <SelectItemIndicator />
               </SelectItem>
