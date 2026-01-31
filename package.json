@@ -1,18 +1,23 @@
 {
-  "name": "@mdspl/mds-shared-ui",
-  "version": "1.1.8",
+  "name": "@hotelrank/raw-grids",
+  "version": "1.0.0",
   "description": "Chakra UI v3 DataTable with sorting, pagination, column visibility & drag reorder",
-  "author": "magadh",
+  "author": "raj purkait",
   "license": "MIT",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "keywords": [
-    "mds-shared-ui",
-    "@mdspl/mds-shared-ui",
-    "chakra-table"
+    "hotelrank",
+    "@hotelrank/raw-grids",
+    "raw-grids",
+    "chakra-table",
+    "chakra-resuable-table"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist"
   ],
@@ -26,8 +31,7 @@
   "peerDependencies": {
     "@chakra-ui/react": ">=3",
     "react": ">=19",
-    "react-dom": ">=19",
-    "uuid": "^13.0.0"
+    "react-dom": ">=19"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
