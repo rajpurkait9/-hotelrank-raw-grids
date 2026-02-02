@@ -1,8 +1,8 @@
-import { Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
-import { IFilterConfig } from './components/filters';
-import FiltersToolBar from './components/filters/Filters';
-import { loadOrder, saveOrder } from './components/filters/reorderStore';
+import { Text } from "@chakra-ui/react";
+import { useState } from "react";
+import { IFilterConfig } from "./components/filters";
+import FiltersToolBar from "./components/filters/Filters";
+import { saveOrder } from "./components/filters/reorderStore";
 
 type HeaderProps = {
   search: string;
@@ -14,48 +14,48 @@ export const DemoFilter = ({ search, onSearchChange }: HeaderProps) => {
 
   const [filters, setFilters] = useState<IFilterConfig[]>([
     {
-      id: 'search input',
+      id: "search input",
       visible: true,
-      label: 'Search',
+      label: "Search",
       value: search,
       onChange: (v) => {
         onSearchChange(v as string);
-        updateFilterValue('search input', v);
+        updateFilterValue("search input", v);
       },
       size: 2.5,
-      type: 'text',
+      type: "text",
     },
     {
-      id: 'checkbox',
+      id: "checkbox",
       visible: true,
-      label: 'Checkbox',
+      label: "Checkbox",
       value: false,
-      onChange: (v) => updateFilterValue('checkbox', v),
+      onChange: (v) => updateFilterValue("checkbox", v),
       size: 1,
-      type: 'checkbox',
+      type: "checkbox",
     },
     {
-      id: 'select',
+      id: "select",
       visible: true,
-      label: 'Select Box',
+      label: "Select Box",
       value: undefined, // Start undefined
-      onChange: (v) => updateFilterValue('select', v),
+      onChange: (v) => updateFilterValue("select", v),
       size: 1.5,
-      type: 'select',
+      type: "select",
       options: [
-        { label: 'Option 1', value: 'option1' },
-        { label: 'Option 2', value: 'option2' },
-        { label: 'Option 3', value: 'option3' },
+        { label: "Option 1", value: "option1" },
+        { label: "Option 2", value: "option2" },
+        { label: "Option 3", value: "option3" },
       ],
     },
     {
-      id: 'Date',
+      id: "Date",
       visible: true,
-      label: 'Date Picker',
+      label: "Date Picker",
       value: undefined,
-      onChange: (v) => updateFilterValue('Date', v),
+      onChange: (v) => updateFilterValue("Date", v),
       size: 2.5,
-      type: 'date',
+      type: "date",
     },
   ]);
 
@@ -65,11 +65,15 @@ export const DemoFilter = ({ search, onSearchChange }: HeaderProps) => {
   }
 
   function handleVisibility(id: string, visible: boolean) {
-    setFilters((prev) => prev.map((f) => (f.id === id ? { ...f, visible } : f)));
+    setFilters((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, visible } : f)),
+    );
   }
 
   function handleSize(id: string, size: number) {
-    setFilters((prev: any) => prev.map((f) => (f.id === id ? { ...f, size } : f)));
+    setFilters((prev: any) =>
+      prev.map((f) => (f.id === id ? { ...f, size } : f)),
+    );
   }
 
   // Clear all filters to undefined
@@ -84,15 +88,15 @@ export const DemoFilter = ({ search, onSearchChange }: HeaderProps) => {
   }
 
   // Load Order (Persist Layout)
-  useEffect(() => {
-    const order = loadOrder('demo');
-    if (!order.length) return;
+  // useEffect(() => {
+  //   const order = loadOrder('demo');
+  //   if (!order.length) return;
 
-    setFilters((prev) => {
-      const map = Object.fromEntries(prev.map((f) => [f.id, f]));
-      return order.map((id) => map[id]).filter(Boolean);
-    });
-  }, []);
+  //   setFilters((prev) => {
+  //     const map = Object.fromEntries(prev.map((f) => [f.id, f]));
+  //     return order.map((id) => map[id]).filter(Boolean);
+  //   });
+  // }, []);
 
   const activeFilterState = filters.reduce(
     (obj, f) => {
@@ -113,7 +117,7 @@ export const DemoFilter = ({ search, onSearchChange }: HeaderProps) => {
       onVisibilityChange={handleVisibility}
       onReorder={(reordered) => {
         saveOrder(
-          'district-price-history-filter',
+          "district-price-history-filter",
           reordered.map((f) => f.id),
         );
         setFilters(reordered);

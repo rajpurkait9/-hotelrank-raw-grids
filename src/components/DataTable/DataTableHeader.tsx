@@ -1,43 +1,59 @@
+'use client';
+
 import { Table } from '@chakra-ui/react';
 import { useStore } from '@tanstack/react-store';
-import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import ColumnVisibilityMenu from './ColumnVisibilityMenu';
-import { sortByColumn, toggleColumn } from './DataTableActions';
+import { sortByColumn } from './DataTableActions';
 import SortableHeaderCell from './SortableHeaderCell';
 import { tableStore } from './tableStore';
+import { ACTIONS_COLUMN_ID, VISIBILITY_COLUMN_ID } from './types';
 
 export default function TableHeader() {
-  const { columnOrder, visibility, sortColumn, sortDirection, sortableColumns, actionsConfig } =
+  const { columnOrder, visibility, enableColumnVisibility, sortColumn, sortDirection } =
     useStore(tableStore);
 
-  const visibleOrderedColumns = columnOrder
-    .map((col) => sortableColumns.find((c) => c.id === col.id))
-    .filter((c) => c !== undefined)
-    .filter((c) => visibility[c!.id]);
+  const orderedColumns = columnOrder
+    .filter((col) => {
+      if (!enableColumnVisibility && col.id === VISIBILITY_COLUMN_ID) {
+        return false;
+      }
+
+      if (col.id === VISIBILITY_COLUMN_ID) return true;
+      if (col.id === ACTIONS_COLUMN_ID) return true;
+
+      return visibility[col.id] !== false;
+    })
+    .sort((a, b) => {
+      if (a.id === VISIBILITY_COLUMN_ID) return 1;
+      if (b.id === VISIBILITY_COLUMN_ID) return -1;
+      return 0;
+    });
 
   return (
-    <Table.Header background={'blue.200'} position="sticky" top={0} p="0" zIndex={1}>
-      <Table.Row height={'28px'}>
-        {actionsConfig?.showSNo && (
-          <Table.ColumnHeader
-            width="20px"
-            textAlign="center"
-            backgroundColor={actionsConfig.backgroundColor}
-            borderRight="2px solid #dcdcdc"
-          >
-            {actionsConfig.indexChildren || 'S.No'}
-          </Table.ColumnHeader>
-        )}
+    <Table.Header position="sticky" top={0} zIndex={1}>
+      <Table.Row height="28px">
+        {orderedColumns.map((col) => {
+          if (col.id === VISIBILITY_COLUMN_ID) {
+            return (
+              <Table.ColumnHeader key={col.id} width="50px">
+                <ColumnVisibilityMenu visibility={visibility} />
+              </Table.ColumnHeader>
+            );
+          }
 
-        {visibleOrderedColumns.map((col) => {
-          const isSorted = sortColumn === col?.id;
+          const isSortable =
+            col.type !== 'actions' && col.type !== 'visibility' && col.sortable !== false;
+
+          const isSorted = sortColumn === col.id;
+
           return (
             <SortableHeaderCell
-              key={col?.id}
-              id={col?.id}
-              onClick={() => col?.sortable && sortByColumn(col?.id)}
+              key={col.id}
+              id={col.id}
+              minW={col.minWidth}
+              onClick={isSortable ? () => sortByColumn(col.id) : undefined}
+              cursor={isSortable ? 'pointer' : 'default'}
               borderRight="2px solid #dcdcdc"
-              backgroundColor={col?.backgroundColor}
             >
               <span
                 style={{
@@ -49,38 +65,20 @@ export default function TableHeader() {
               >
                 {col.label}
 
-                {col?.sortable &&
+                {isSortable &&
                   (isSorted ? (
                     sortDirection === 'asc' ? (
-                      <ArrowUp size={14} />
+                      ' ▲'
                     ) : (
-                      <ArrowDown size={14} />
+                      ' ▼'
                     )
                   ) : (
-                    <ArrowUpDown size={14} opacity={0.4} />
+                    <span style={{ opacity: 0.4 }}> ⇅</span>
                   ))}
               </span>
             </SortableHeaderCell>
           );
         })}
-
-        {actionsConfig?.showActionColumn && (
-          <Table.ColumnHeader
-            width={actionsConfig.width}
-            backgroundColor={actionsConfig.backgroundColor}
-            borderRight="2px solid #dcdcdc"
-          >
-            {actionsConfig.children || 'Actions'}
-          </Table.ColumnHeader>
-        )}
-        {actionsConfig?.showColumnVisibilityMenu && (
-          <Table.ColumnHeader
-            boxSize={'0.5'}
-            backgroundColor={actionsConfig.backgroundColorColumnVisibilityMenu}
-          >
-            <ColumnVisibilityMenu visibility={visibility} onToggle={toggleColumn} />
-          </Table.ColumnHeader>
-        )}
       </Table.Row>
     </Table.Header>
   );

@@ -1,104 +1,45 @@
 'use client';
 
-import { IconButton, Menu, Portal, Table } from '@chakra-ui/react';
+import { Table } from '@chakra-ui/react';
 import { useStore } from '@tanstack/react-store';
-import { MoreHorizontal } from 'lucide-react';
-import React from 'react';
-import { withChildren } from '../../utils/chakra-slot';
 import { tableStore } from './tableStore';
-import { ActionHeaderProps, DataTableAction } from './types';
+import { ACTIONS_COLUMN_ID, Column, VISIBILITY_COLUMN_ID } from './types';
 
-const MenuItem = withChildren(Menu.Item);
-const MenuContent = withChildren(Menu.Content);
-const MenuPositioner = withChildren(Menu.Positioner);
-const MenuTrigger = withChildren(Menu.Trigger);
-
-export default function TableRows({
-  data = [] as Array<Record<string, any>>,
-  actions = [],
-  actionConfig,
+export default function TableRows<T extends { id: string | number }>({
+  data,
+  columns,
   onRowSelect,
   onRowSelectEvent = 'left',
-  startIndex = 0,
 }: {
-  data: Array<Record<string, any>>;
-  actions?: DataTableAction<any>[];
-  actionConfig?: ActionHeaderProps;
-  onRowSelect?: (row: any, event?: React.MouseEvent) => void;
+  data: T[];
+  columns: Column<T>[];
+  onRowSelect?: (row: T, event?: React.MouseEvent) => void;
   onRowSelectEvent?: 'left' | 'right';
-  startIndex?: number;
 }) {
-  const { columnOrder, visibility, columnWidths } = useStore(tableStore);
+  const { visibility } = useStore(tableStore);
 
   return (
     <Table.Body>
-      {data.map((row, index) => (
+      {data.map((row) => (
         <Table.Row
-          key={row.__key || row.id}
-          onClick={() => onRowSelectEvent === 'left' && onRowSelect?.(row.__raw)}
-          _hover={{
-            bg: 'blue.50',
-          }}
-          onContextMenu={
-            onRowSelectEvent === 'right'
-              ? (e) => {
-                  e.preventDefault();
-                  onRowSelect?.(row.__raw, e);
-                }
-              : undefined
-          }
+          key={row.id}
+          onClick={(e) => onRowSelectEvent === 'left' && onRowSelect?.(row, e)}
         >
-          {actionConfig?.showSNo && (
-            <Table.Cell textAlign="center" fontWeight="medium">
-              {startIndex + index + 1}
-            </Table.Cell>
-          )}
-          {columnOrder
-            .filter((id) => visibility[id.id])
-            .map((id) => (
-              <Table.Cell
-                w={columnWidths[id.id] ? columnWidths[id.id] + 'px' : undefined}
-                key={id.id}
-              >
-                {row[id.id]}
+          {columns
+            .filter((col) => {
+              if (col.id === VISIBILITY_COLUMN_ID) return false;
+
+              if (col.id === ACTIONS_COLUMN_ID) return true;
+
+              return visibility[col.id] !== false;
+            })
+            .map((col) => (
+              <Table.Cell key={col.id}>
+                {'render' in col && col.render
+                  ? col.render(row)
+                  : String((row as any)[col.id] ?? '—')}
               </Table.Cell>
             ))}
-
-          {actionConfig?.showActionColumn && (
-            <Table.Cell textAlign="center" display="flex" gap={2}>
-              <Menu.Root>
-                <MenuTrigger asChild>
-                  <IconButton aria-label="Open" variant="ghost" size="sm">
-                    <MoreHorizontal size={16} />
-                  </IconButton>
-                </MenuTrigger>
-                {/* <Portal> */}
-                  <MenuPositioner>
-                    <MenuContent>
-                      {actions
-                        .filter((action) =>
-                          typeof action.visible === 'function'
-                            ? action.visible(row.__raw)
-                            : action.visible !== false,
-                        )
-                        .map((action) => (
-                          <MenuItem
-                            key={action.label}
-                            onClick={() => action.onClick(row.__raw)}
-                            colorScheme={action.colorScheme}
-                            value={action.label}
-                          >
-                            {action.icon}
-                            {action.label}
-                          </MenuItem>
-                        ))}
-                    </MenuContent>
-                  </MenuPositioner>
-                {/* </Portal> */}
-              </Menu.Root>
-            </Table.Cell>
-          )}
-          {actionConfig?.showColumnVisibilityMenu && <Table.Cell></Table.Cell>}
         </Table.Row>
       ))}
     </Table.Body>

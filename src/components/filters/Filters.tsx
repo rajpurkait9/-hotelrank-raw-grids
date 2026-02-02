@@ -1,7 +1,8 @@
 import { HStack } from '@chakra-ui/react';
 import { useState } from 'react';
-import FiltersDrawer, { renderFilter } from './FilterDrawer';
+import FiltersDrawer  from './FilterDrawer';
 import { IMainFilterType } from './FilterTypes';
+import { RenderFilter } from './RenderFilter';
 
 export const FiltersToolBar = ({
   title,
@@ -31,7 +32,7 @@ export const FiltersToolBar = ({
               key={filter.id}
               alignItems={'center'}
             >
-              {renderFilter(filter)}
+              {RenderFilter(filter)}
             </HStack>
           ))}
 

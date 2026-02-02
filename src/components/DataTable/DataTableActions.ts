@@ -4,7 +4,7 @@ import { Column } from './types';
 export const getColumnOrderKey = (tableId: string) => `table_column_order_v1:${tableId}`;
 export const getColumnVisibilityKey = (tableId: string) => `table_column_visibility_v1:${tableId}`;
 
-export const setColumnOrder = (order: Column[]) => {
+export const setColumnOrder = (order: Column<any>[]) => {
   const { tableId } = tableStore.state;
   localStorage.setItem(getColumnOrderKey(tableId), JSON.stringify(order.map((c) => c.id)));
 
@@ -18,10 +18,12 @@ export const setColumnOrder = (order: Column[]) => {
 export function sortByColumn(columnId: string) {
   tableStore.setState((s) => {
     if (s.sortColumn === columnId) {
-      return {
-        ...s,
-        sortDirection: s.sortDirection === 'asc' ? 'desc' : 'asc',
-      };
+      if (s.sortDirection === 'asc') {
+        return { ...s, sortDirection: 'desc' };
+      }
+      if (s.sortDirection === 'desc') {
+        return { ...s, sortColumn: null, sortDirection: null };
+      }
     }
 
     return {
@@ -80,7 +82,7 @@ export const resetColumnVisibility = () => {
 };
 
 interface GetVisibleOrderedColumnsArgs {
-  columnOrder: Column[];
+  columnOrder: Column<any>[];
   sortableColumns: {
     id: string;
     label: string;
@@ -101,18 +103,17 @@ export function getVisibleOrderedColumns({
     .filter((col) => visibility[col.id]);
 }
 
-
 export function setColumnWidth(columnId: string, width: number) {
   tableStore.setState((prev) => {
+    const col = prev.columnOrder.find((c) => c.id === columnId);
+    const min = typeof col?.minWidth === 'number' ? col.minWidth : 120;
+
     const updated = {
       ...prev.columnWidths,
-      [columnId]: Math.max(60, width), // min width
+      [columnId]: Math.max(min, width),
     };
 
-    localStorage.setItem(
-      getColumnWidthKey(prev.tableId),
-      JSON.stringify(updated),
-    );
+    localStorage.setItem(getColumnWidthKey(prev.tableId), JSON.stringify(updated));
 
     return { ...prev, columnWidths: updated };
   });

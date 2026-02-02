@@ -1,6 +1,6 @@
 {
   "name": "@hotelrank/raw-grids",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Chakra UI v3 DataTable with sorting, pagination, column visibility & drag reorder",
   "author": "raj purkait",
   "license": "MIT",

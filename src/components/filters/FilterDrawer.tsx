@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Button,
@@ -10,23 +10,28 @@ import {
   Tabs,
   Text,
   VStack,
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
-import { closestCenter, DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Bookmark, Delete, Edit2, Filter, Settings } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { withChildren } from '../../utils/chakra-slot';
-import MDSCheckbox from '../chakra-compo/CheckBox';
-import MDSCombobox from '../chakra-compo/Combobox';
-import MDSDateRangePicker from '../chakra-compo/DateComponent/DateRangeSelector';
-import MDSDatePicker from '../chakra-compo/DateComponent/DateSelector';
-import MDSInput from '../chakra-compo/Input';
-import MDSSelectBox from '../chakra-compo/SelectBox';
-import { IFilterConfig, IFilterDrawerProps } from './FilterTypes';
-import { addPreset, deletePreset, getPresets, PresetItem } from './presetStore';
-import SortableFilterItem from './SortableFilterItem';
+import {
+  closestCenter,
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { Bookmark, Delete, Edit2, Filter, Settings } from "lucide-react";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { withChildren } from "../../utils/chakra-slot";
+import { IFilterDrawerProps } from "./FilterTypes";
+import { addPreset, deletePreset, getPresets, PresetItem } from "./presetStore";
+import { RenderFilter } from "./RenderFilter";
+import SortableFilterItem from "./SortableFilterItem";
 
 const DrawerRoot = withChildren(Drawer.Root);
 const DrawerTrigger = withChildren(Drawer.Trigger);
@@ -43,107 +48,17 @@ const TabsList = withChildren(Tabs.List);
 const TabsTrigger = withChildren(Tabs.Trigger);
 const TabsContent = withChildren(Tabs.Content);
 
-export const renderFilter = (filter: IFilterConfig, drawerOpen?: boolean) => {
-  if (filter.customComponent) {
-    return filter.customComponent;
-  }
-
-  switch (filter.type) {
-    case 'text':
-      return (
-        <MDSInput
-          placeholder={filter.label}
-          value={filter.value as string}
-          onChange={filter.onChange}
-          label={filter.label}
-          visible={drawerOpen}
-        />
-      );
-
-    case 'number':
-      return (
-        <MDSInput label={filter.label} value={filter.value as number} onChange={filter.onChange} />
-      );
-
-    case 'checkbox':
-      return (
-        <MDSCheckbox
-          label={filter.label}
-          value={filter.value as boolean}
-          onChange={filter.onChange}
-        />
-      );
-
-    case 'select':
-      return (
-        <MDSSelectBox
-          label={filter.label}
-          value={filter.value as string}
-          onChange={filter.onChange}
-          options={filter.options ?? []}
-          visible={drawerOpen}
-          placeholder={filter.placeholder}
-        />
-      );
-
-    case 'date':
-      return (
-        // <DateRangeFilter
-        //   value={filter.value as string}
-        //   onChange={filter.onChange as (v: string | undefined) => void}
-        // />
-        <MDSDatePicker
-          value={filter.value as Date}
-          onChange={filter.onChange as (v: string | Date | null) => void}
-          visible={drawerOpen}
-          label={filter.label}
-        />
-      );
-
-    case 'date-range':
-      return (
-        <MDSDateRangePicker
-          startDate={filter.startDate ? new Date(filter.startDate) : undefined}
-          endDate={filter.endDate ? new Date(filter.endDate) : undefined}
-          onChange={filter.onChange as (v: string | Date | null | undefined) => void}
-          visible={drawerOpen}
-          label={filter.label}
-        />
-      );
-
-    case 'combobox':
-      return (
-        <MDSCombobox
-          visible={true}
-          label={filter.label}
-          // value={filter.value }
-          // items={filter.options?.map((item) => ({
-          //   ...item,
-          //   label: String(item.label),
-          // }))}
-          itemToString={(i) => String(i.label)}
-          itemToValue={(i: { value: string }) => i.value}
-          renderItem={(item: { label: string; value: string }) => <span>{item.label}</span>}
-        />
-      );
-
-    default:
-      return null;
-  }
-};
-
 interface DrawerProps extends IFilterDrawerProps {
   open: boolean;
   onOpenChange: (open: { open: boolean }) => void;
 }
 
 export const FiltersDrawer = ({
-  filterDrawerSize = 'sm',
+  filterDrawerSize = "sm",
   onVisibilityChange,
   onSizeChange,
-  onClear,
   filters,
-  pageKey = 'default',
+  pageKey = "default",
   onLoadPreset,
   activePresetName,
   onReorder,
@@ -160,17 +75,17 @@ export const FiltersDrawer = ({
     refreshPresets();
 
     // Listen for changes in the same window or other tabs
-    window.addEventListener('storage', refreshPresets);
-    window.addEventListener('storage_updated', refreshPresets);
+    window.addEventListener("storage", refreshPresets);
+    window.addEventListener("storage_updated", refreshPresets);
 
     return () => {
-      window.removeEventListener('storage', refreshPresets);
-      window.removeEventListener('storage_updated', refreshPresets);
+      window.removeEventListener("storage", refreshPresets);
+      window.removeEventListener("storage_updated", refreshPresets);
     };
   }, [pageKey]);
 
   const handleSave = () => {
-    const name = prompt('Preset name?');
+    const name = prompt("Preset name?");
     if (!name) return;
 
     const values = filters.reduce(
@@ -191,9 +106,19 @@ export const FiltersDrawer = ({
 
   return (
     <HStack wrap="wrap">
-      <DrawerRoot size={filterDrawerSize} open={open} onOpenChange={onOpenChange}>
+      <DrawerRoot
+        size={filterDrawerSize}
+        open={open}
+        onOpenChange={onOpenChange}
+      >
         <DrawerTrigger asChild>
-          <IconButton aria-label="Open filters" variant="outline" size="xs" ml={2} p={2}>
+          <IconButton
+            aria-label="Open filters"
+            variant="outline"
+            size="xs"
+            ml={2}
+            p={2}
+          >
             <Filter size={16} />
             Filters
           </IconButton>
@@ -241,7 +166,7 @@ export const FiltersDrawer = ({
                           p={3}
                           mb={3}
                         >
-                          {renderFilter(f, open)}
+                          {RenderFilter(f, open)}
                         </VStack>
                       ))}
                   </TabsContent>
@@ -253,9 +178,17 @@ export const FiltersDrawer = ({
                       onDragEnd={({ active, over }) => {
                         if (!over || active.id === over.id) return;
 
-                        const oldIndex = filters.findIndex((f) => f.id === active.id);
-                        const newIndex = filters.findIndex((f) => f.id === over.id);
-                        const reordered = arrayMove(filters, oldIndex, newIndex);
+                        const oldIndex = filters.findIndex(
+                          (f) => f.id === active.id,
+                        );
+                        const newIndex = filters.findIndex(
+                          (f) => f.id === over.id,
+                        );
+                        const reordered = arrayMove(
+                          filters,
+                          oldIndex,
+                          newIndex,
+                        );
                         onReorder?.(reordered);
                       }}
                     >
@@ -289,7 +222,11 @@ export const FiltersDrawer = ({
                           key={p.id}
                           justify="space-between"
                           border="1px solid"
-                          borderColor={activePresetName === p.name ? 'blue.300' : 'gray.200'}
+                          borderColor={
+                            activePresetName === p.name
+                              ? "blue.300"
+                              : "gray.200"
+                          }
                           rounded="md"
                           p={2}
                         >
